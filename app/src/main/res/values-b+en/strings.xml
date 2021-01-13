@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WppClone</string>
+    <!-- Authentication -->
+    <!-- Login -->
+    <string name="hint_login_email">Type your e-mail</string>
+    <string name="hint_login_password">Type your password</string>
+    <string name="text_dont_have_account">Don\'t have an account? Signup now!</string>
+    <string name="login">Login</string>
+    <string name="edt_invalid">Fill all the fields first</string>
+    <!-- SignUp -->
+    <string name="hint_signup_name">"Type your e-mail</string>
+    <string name="button_signup">Sign Up</string>
+</resources>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "508039976171",
+    "project_id": "wppclone-8e694",
+    "storage_bucket": "wppclone-8e694.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508039976171:android:ee5f5d6ce71f28f0211aae",
+        "android_client_info": {
+          "package_name": "com.murilofb.wppclone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "508039976171-28cjmo915g4s0e8u5u0e97l8uct2figj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.murilofb.wppclone",
+            "certificate_hash": "3cd6c255d17267d6b137f36190a1e6f807ac670c"
+          }
+        },
+        {
+          "client_id": "508039976171-u46q6f92ukrd7no3q1h4dn3eemhv3n6k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsuf_y7AbK5FxLlQKbi9xWSZeWRAhjTt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "508039976171-u46q6f92ukrd7no3q1h4dn3eemhv3n6k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
