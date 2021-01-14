@@ -39,7 +39,7 @@
             android:id="@+id/edtSignUpName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_login_email"
+            android:hint="@string/hint_signup_name"
             android:inputType="textEmailAddress"
             android:textColor="@android:color/white"
             android:textColorHint="@android:color/darker_gray" />

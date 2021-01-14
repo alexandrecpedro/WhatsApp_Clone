@@ -8,9 +8,14 @@
     <string name="text_dont_have_account">Não tem conta? Cadastre-se!</string>
     <string name="login">Logar</string>
     <string name="edt_invalid">Preencha todos os campos primeiro</string>
+    <string name="toast_default_login_error">Não foi possivel logar na sua conta</string>
     <!-- SignUp -->
     <string name="hint_signup_name">"Digite seu nome</string>
     <string name="button_signup">Cadastrar</string>
+    <string name="toast_default_signin_error">Não foi possivel criar a sua conta</string>
+    <string name="toast_email_collision">E-mail já cadastrado</string>
+    <string name="toast_weak_password">Insira uma senha mais forte</string>
+    <string name="toast_invalid_credentials">E-mail ou senha inválidos</string>
 
     <!--Home -->
     <!-- Menu Itens -->

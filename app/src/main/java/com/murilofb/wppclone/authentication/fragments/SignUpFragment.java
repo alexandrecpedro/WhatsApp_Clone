@@ -1,6 +1,7 @@
 package com.murilofb.wppclone.authentication.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.murilofb.wppclone.authentication.AuthActivity;
 import com.murilofb.wppclone.helpers.Base64H;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.ToastH;
+import com.murilofb.wppclone.models.UserModel;
 
 public class SignUpFragment extends Fragment {
     private Button btnSignup;
@@ -47,17 +49,21 @@ public class SignUpFragment extends Fragment {
         toast = new ToastH(getActivity());
         FirebaseH firebaseH = new FirebaseH();
         AuthActivity activity = (AuthActivity) getActivity();
-        firebaseH.addObserver(activity.getObserver());
-        auth = firebaseH.new Auth();
+        firebaseH.addObserver(activity);
+        auth = firebaseH.new Auth(getActivity());
     }
 
     private void setClickListener() {
         View.OnClickListener clickListener = v -> {
             if (v.getId() == R.id.btnSignup) {
                 if (validateEditText()) {
-                    String signUpPassword = edtSignUpPassword.getText().toString();
+                    Log.i("SignUp", "notEmpty");
+                    String signUpName = edtSignUpName.getText().toString();
                     String signUpEmail = edtSignUpEmail.getText().toString();
-                    auth.signUp(signUpEmail, Base64H.encode(signUpPassword));
+                    String signUpPassword = edtSignUpPassword.getText().toString();
+
+                    UserModel model = new UserModel(signUpName, signUpEmail, Base64H.encode(signUpPassword));
+                    auth.signUp(model);
                 } else {
                     toast.showToast(getString(R.string.edt_invalid));
                 }
@@ -71,7 +77,7 @@ public class SignUpFragment extends Fragment {
         String signUpName = edtSignUpName.getText().toString();
         String signUpEmail = edtSignUpEmail.getText().toString();
 
-        return !signUpPassword.isEmpty() && !signUpName.isEmpty() || !signUpEmail.isEmpty();
+        return !signUpPassword.isEmpty() && !signUpName.isEmpty() && !signUpEmail.isEmpty();
     }
 
 }

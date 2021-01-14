@@ -1,8 +1,7 @@
 package com.murilofb.wppclone.helpers;
 
 import android.content.Intent;
-import android.widget.Button;
-import android.widget.EditText;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -21,11 +20,13 @@ public class TransitionsH {
     private AppCompatActivity activity;
 
 
-    public TransitionsH(AppCompatActivity activity) {
+    public TransitionsH(AppCompatActivity activity, boolean manipulatesFragments) {
         this.activity = activity;
-        this.manager = activity.getSupportFragmentManager();
-        this.transaction = manager.beginTransaction();
-        this.transaction.setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out);
+        if (manipulatesFragments) {
+            this.manager = activity.getSupportFragmentManager();
+            this.transaction = manager.beginTransaction();
+            this.transaction.setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out);
+        }
     }
 
     public void openLogin() {
@@ -54,7 +55,8 @@ public class TransitionsH {
     }
 
     public void openAuthentication() {
-        activity.startActivity(new Intent(activity, AuthActivity.class));
-        activity.finishAffinity();
+        Log.i("FirebaseH", "OpenAuth");
+            activity.startActivity(new Intent(activity.getApplicationContext(), AuthActivity.class));
+            activity.finish();
     }
 }

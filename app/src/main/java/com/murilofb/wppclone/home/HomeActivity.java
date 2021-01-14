@@ -17,22 +17,19 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class HomeActivity extends AppCompatActivity implements Observer {
-    private TransitionsH transactions;
+    private TransitionsH transitions;
     private FirebaseH.Auth auth;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        initComponents();
-        Log.i("firebaseH", "fewfwe");
-    }
-
-    private void initComponents() {
-        transactions = new TransitionsH(this);
+        transitions = new TransitionsH(this, false);
         FirebaseH firebaseH = new FirebaseH();
         firebaseH.addObserver(this);
-        auth = firebaseH.new Auth();
+        auth = firebaseH.new Auth(null);
+        auth.listenUserAuthStatus();
     }
 
     @Override
@@ -43,9 +40,7 @@ public class HomeActivity extends AppCompatActivity implements Observer {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Log.i("FirebaseH", "ClicouNumItemAi");
         if (item.getItemId() == R.id.menuSignOut) {
-            Log.i("FirebaseH", "signoutClicked");
             auth.signOutUser();
         }
         return super.onOptionsItemSelected(item);
@@ -53,9 +48,9 @@ public class HomeActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Log.i("FirebaseH", "update");
         if (arg.equals(FirebaseH.Auth.ARG_SIGN_OUT)) {
-            transactions.openAuthentication();
+            transitions.openAuthentication();
         }
     }
+
 }

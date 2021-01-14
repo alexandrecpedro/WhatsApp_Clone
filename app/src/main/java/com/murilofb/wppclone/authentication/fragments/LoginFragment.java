@@ -20,6 +20,7 @@ import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.helpers.Base64H;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.ToastH;
+import com.murilofb.wppclone.home.HomeActivity;
 
 
 public class LoginFragment extends Fragment {
@@ -52,11 +53,11 @@ public class LoginFragment extends Fragment {
         edtLoginPassword = view.findViewById(R.id.edtLoginPassword);
 
         toast = new ToastH(getActivity());
-        transaction = new TransitionsH((AppCompatActivity) getActivity());
+        transaction = new TransitionsH((AppCompatActivity) getActivity(),true);
         AuthActivity authActivity = (AuthActivity) getActivity();
         FirebaseH firebaseH = new FirebaseH();
-        firebaseH.addObserver(authActivity.getObserver());
-        auth = firebaseH.new Auth();
+        firebaseH.addObserver(authActivity);
+        auth = firebaseH.new Auth(getActivity());
     }
 
     private boolean validateEditText() {

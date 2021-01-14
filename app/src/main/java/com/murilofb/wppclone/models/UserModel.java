@@ -5,7 +5,7 @@ public class UserModel {
     private String password;
     private String email;
 
-    public UserModel(String name, String password, String email) {
+    public UserModel(String name, String email, String password) {
         this.name = name;
         this.password = password;
         this.email = email;
