@@ -3,17 +3,17 @@ package com.murilofb.wppclone.authentication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.helpers.FirebaseH;
+import com.murilofb.wppclone.helpers.TransitionsH;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public class AuthActivity extends AppCompatActivity implements Observer {
-    private AuthTransaction transaction;
+    private TransitionsH transaction;
     private Observer observer = this;
     private Toast toast;
 
@@ -21,7 +21,7 @@ public class AuthActivity extends AppCompatActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
-        transaction = new AuthTransaction(this);
+        transaction = new TransitionsH(this);
         transaction.openLogin();
         toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
     }

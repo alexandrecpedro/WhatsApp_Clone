@@ -21,23 +21,18 @@ public class FirebaseH extends Observable {
 
     public class Auth {
         private final FirebaseAuth auth = FirebaseAuth.getInstance();
+        private final FirebaseAuth.AuthStateListener signOutListener = firebaseAuth -> {
+            if (firebaseAuth.getCurrentUser() == null) {
+                Log.i("FirebaseH", "user null");
+                updateChanges(ARG_SIGN_OUT);
+                removeListener();
+            }
+        };
+
         public static final String ARG_AUTH = "auth";
+        public static final String ARG_SIGN_OUT = "authOut";
 
         public Auth() {
-        }
-
-        public void login(String email, String password) {
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Log.i("Auth", "LoginSuccess");
-                    } else {
-                        Log.i("Auth", "LoginFailure");
-                    }
-                }
-            });
-            updateChanges(ARG_AUTH);
         }
 
         public void signUp(String email, String password) {
@@ -46,12 +41,39 @@ public class FirebaseH extends Observable {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         Log.i("Auth", "SignUpSuccess");
+                        updateChanges(ARG_AUTH);
+                        auth.addAuthStateListener(signOutListener);
                     } else {
                         Log.i("Auth", "SignUpFailure");
                     }
                 }
             });
-            updateChanges(ARG_AUTH);
+
+        }
+
+
+        public void login(String email, String password) {
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.i("Auth", "LoginSuccess");
+                        updateChanges(ARG_AUTH);
+                        auth.addAuthStateListener(signOutListener);
+                    } else {
+                        Log.i("Auth", "LoginFailure");
+                    }
+                }
+            });
+        }
+
+        private void removeListener() {
+            auth.removeAuthStateListener(signOutListener);
+        }
+
+        public void signOutUser() {
+            auth.signOut();
+            Log.i("FirebaseH", "SignOutUser");
         }
     }
 }

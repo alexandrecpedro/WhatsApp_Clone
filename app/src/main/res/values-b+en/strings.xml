@@ -9,6 +9,10 @@
     <string name="login">Login</string>
     <string name="edt_invalid">Fill all the fields first</string>
     <!-- SignUp -->
-    <string name="hint_signup_name">"Type your e-mail</string>
+    <string name="hint_signup_name">"Type your <name></name></string>
     <string name="button_signup">Sign Up</string>
+
+    <!--Home -->
+    <!-- Menu Itens -->
+    <string name="menu_signout">Exit</string>
 </resources>

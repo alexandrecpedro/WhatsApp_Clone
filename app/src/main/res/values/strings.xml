@@ -11,4 +11,8 @@
     <!-- SignUp -->
     <string name="hint_signup_name">"Digite seu nome</string>
     <string name="button_signup">Cadastrar</string>
+
+    <!--Home -->
+    <!-- Menu Itens -->
+    <string name="menu_signout">Sair</string>
 </resources>

@@ -1,13 +1,13 @@
 package com.murilofb.wppclone.authentication.fragments;
 
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,8 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.murilofb.wppclone.authentication.AuthActivity;
-import com.murilofb.wppclone.authentication.AuthTransaction;
+import com.murilofb.wppclone.helpers.TransitionsH;
 import com.murilofb.wppclone.R;
+import com.murilofb.wppclone.helpers.Base64H;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.ToastH;
 
@@ -27,7 +28,7 @@ public class LoginFragment extends Fragment {
     private EditText edtLoginEmail;
     private EditText edtLoginPassword;
     private FirebaseH.Auth auth;
-    private AuthTransaction transaction;
+    private TransitionsH transaction;
     private ToastH toast;
 
     public LoginFragment() {
@@ -39,6 +40,8 @@ public class LoginFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         initComponents(view);
         setClickListener();
+        edtLoginEmail.setText("murilo.kta.leo@gmail.com");
+        edtLoginPassword.setText("123456");
         return view;
     }
 
@@ -49,7 +52,7 @@ public class LoginFragment extends Fragment {
         edtLoginPassword = view.findViewById(R.id.edtLoginPassword);
 
         toast = new ToastH(getActivity());
-        transaction = new AuthTransaction((AppCompatActivity) getActivity());
+        transaction = new TransitionsH((AppCompatActivity) getActivity());
         AuthActivity authActivity = (AuthActivity) getActivity();
         FirebaseH firebaseH = new FirebaseH();
         firebaseH.addObserver(authActivity.getObserver());
@@ -59,7 +62,6 @@ public class LoginFragment extends Fragment {
     private boolean validateEditText() {
         String loginEmail = edtLoginEmail.getText().toString();
         String loginPassword = edtLoginPassword.getText().toString();
-
         return !loginEmail.isEmpty() && !loginPassword.isEmpty();
     }
 
@@ -69,9 +71,10 @@ public class LoginFragment extends Fragment {
                 transaction.openSignUp();
             } else if (v.getId() == R.id.btnLogin) {
                 if (validateEditText()) {
-                    auth.login("noitu", "love");
+                    String loginEmail = edtLoginEmail.getText().toString();
+                    String loginPassword = edtLoginPassword.getText().toString();
+                    auth.login(loginEmail, Base64H.encode(loginPassword));
                 } else {
-                    Log.i("Toast", "invalidEdt");
                     toast.showToast(getString(R.string.edt_invalid));
                 }
             }

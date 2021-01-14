@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.authentication.AuthActivity;
+import com.murilofb.wppclone.helpers.Base64H;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.ToastH;
 
@@ -54,7 +55,9 @@ public class SignUpFragment extends Fragment {
         View.OnClickListener clickListener = v -> {
             if (v.getId() == R.id.btnSignup) {
                 if (validateEditText()) {
-                    auth.signUp("murilo", "123");
+                    String signUpPassword = edtSignUpPassword.getText().toString();
+                    String signUpEmail = edtSignUpEmail.getText().toString();
+                    auth.signUp(signUpEmail, Base64H.encode(signUpPassword));
                 } else {
                     toast.showToast(getString(R.string.edt_invalid));
                 }

@@ -1,4 +1,4 @@
-package com.murilofb.wppclone.authentication;
+package com.murilofb.wppclone.helpers;
 
 import android.content.Intent;
 import android.widget.Button;
@@ -8,19 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.murilofb.wppclone.authentication.AuthActivity;
 import com.murilofb.wppclone.authentication.fragments.LoginFragment;
 import com.murilofb.wppclone.authentication.fragments.SignUpFragment;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.home.HomeActivity;
 
-public class AuthTransaction {
+public class TransitionsH {
     public static final String TAG_AUTH = "auth";
     private FragmentTransaction transaction;
     private FragmentManager manager;
     private AppCompatActivity activity;
 
 
-    public AuthTransaction(AppCompatActivity activity) {
+    public TransitionsH(AppCompatActivity activity) {
         this.activity = activity;
         this.manager = activity.getSupportFragmentManager();
         this.transaction = manager.beginTransaction();
@@ -50,5 +51,10 @@ public class AuthTransaction {
         } else {
             return false;
         }
+    }
+
+    public void openAuthentication() {
+        activity.startActivity(new Intent(activity, AuthActivity.class));
+        activity.finishAffinity();
     }
 }
