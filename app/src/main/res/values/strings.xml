@@ -2,14 +2,14 @@
 <resources>
     <string name="app_name">WppClone</string>
     <!-- Authentication -->
-    <!-- Login -->
+    <!-- LoginFrag -->
     <string name="hint_login_email">Digite seu e-mail</string>
     <string name="hint_login_password">Digite sua senha</string>
     <string name="text_dont_have_account">Não tem conta? Cadastre-se!</string>
     <string name="login">Logar</string>
     <string name="edt_invalid">Preencha todos os campos primeiro</string>
     <string name="toast_default_login_error">Não foi possivel logar na sua conta</string>
-    <!-- SignUp -->
+    <!-- SignUpFrag -->
     <string name="hint_signup_name">"Digite seu nome</string>
     <string name="button_signup">Cadastrar</string>
     <string name="toast_default_signin_error">Não foi possivel criar a sua conta</string>
@@ -18,6 +18,28 @@
     <string name="toast_invalid_credentials">E-mail ou senha inválidos</string>
 
     <!--Home -->
+    <!-- MessagesFrag -->
+    <string name="title_messages_frag">Mensagens</string>
+    <!-- ContactsFrag -->
+    <string name="title_contacts_frag">Contatos</string>
     <!-- Menu Itens -->
     <string name="menu_signout">Sair</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_search">Pesquisar</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_act_label">Configurações</string>
+    <string name="hint_user_name">Nome de usuário</string>
+    <string name="explained_username">Esse nome será exibido para seus contatos</string>
+    <string name="welcome_title">Primeiros passos</string>
+    <string name="welcome_message">Escolha uma imagem de perfil e um nome de usuário (você pode edita-los depois)</string>
+    <string name="toast_need_camera_permission">Você precisa permitir o acesso a câmera ao app</string>
+    <string name="toast_need_storage_permission">Você precisa permitir o acesso ao armazenamento ao app</string>
+    <!-- Dialog -->
+    <string name="dialog_settings_title">Escolha uma opção</string>
+    <string name="txt_remove_photo">Remover Foto</string>
+    <string name="txt_from_gallery">Gallery</string>
+    <string name="txt_from_camera">Camera</string>
+    <string name="error_pick_from_gallery">Não foi possível abrir a galeria</string>
+    <string name="error_pick_from_camera">Não foi possível abrir a camera</string>
 </resources>

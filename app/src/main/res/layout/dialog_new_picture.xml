@@ -1,6 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialogLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="?dialogPreferredPadding"
+    app:layout_constraintDimensionRatio="1:1">
 
+
+    <ImageButton
+        android:id="@+id/imgBtnRemovePhoto"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/rounded_button_red"
+        android:scaleType="fitXY"
+        android:padding="20dp"
+        android:src="@drawable/ic_delete"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@id/imgBtnTakePhoto"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:text="@string/txt_remove_photo"
+        app:layout_constraintEnd_toEndOf="@+id/imgBtnRemovePhoto"
+        app:layout_constraintStart_toStartOf="@+id/imgBtnRemovePhoto"
+        app:layout_constraintTop_toBottomOf="@+id/imgBtnRemovePhoto" />
+
+    <ImageButton
+        android:id="@+id/imgBtnTakePhoto"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_button_gray"
+        android:padding="20dp"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintDimensionRatio="1:1"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toStartOf="@id/imgBtnOpenGallery"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/imgBtnRemovePhoto"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/txt_from_camera"
+        app:layout_constraintEnd_toEndOf="@+id/imgBtnTakePhoto"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="@+id/imgBtnTakePhoto"
+        app:layout_constraintTop_toBottomOf="@+id/imgBtnTakePhoto" />
+
+    <ImageButton
+        android:id="@+id/imgBtnOpenGallery"
+        android:layout_width="0dp"
+        android:scaleType="fitXY"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_button_red"
+        android:padding="20dp"
+        android:src="@drawable/ic_gallery"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/imgBtnTakePhoto"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/txt_from_gallery"
+        app:layout_constraintEnd_toEndOf="@+id/imgBtnOpenGallery"
+        app:layout_constraintStart_toStartOf="@+id/imgBtnOpenGallery"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/imgBtnOpenGallery" />
 </androidx.constraintlayout.widget.ConstraintLayout>

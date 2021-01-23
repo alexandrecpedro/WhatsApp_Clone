@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menuSearch"
+        android:icon="@drawable/ic_search"
+        android:title="@string/menu_search"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menuSettings"
+        android:title="@string/menu_settings"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menuSignOut"
-        android:title="Sair" />
+        android:title="@string/menu_signout"
+        app:showAsAction="never" />
+
 </menu>

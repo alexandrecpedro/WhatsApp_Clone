@@ -2,13 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.murilofb.wppclone">
 
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA" />
+    <uses-permission-sdk-23 android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
+
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/zipzop"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/zipzop"
         android:supportsRtl="true"
         android:theme="@style/Theme.WppClone">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"
+                />
+        </provider>
+
         <activity
             android:name=".authentication.AuthActivity"
             android:screenOrientation="portrait"
@@ -20,7 +36,13 @@
         </activity>
         <activity
             android:name=".home.HomeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.WppClone.NoActionBar"></activity>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/settings_act_label"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.WppClone"></activity>
     </application>
 
 </manifest>

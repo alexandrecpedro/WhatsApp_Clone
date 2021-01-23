@@ -1,4 +1,4 @@
-package com.murilofb.wppclone.helpers;
+package com.murilofb.wppclone.authentication;
 
 import android.content.Intent;
 import android.util.Log;
@@ -13,14 +13,14 @@ import com.murilofb.wppclone.authentication.fragments.SignUpFragment;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.home.HomeActivity;
 
-public class TransitionsH {
+public class AuthTransitions {
     public static final String TAG_AUTH = "auth";
     private FragmentTransaction transaction;
     private FragmentManager manager;
     private AppCompatActivity activity;
 
 
-    public TransitionsH(AppCompatActivity activity, boolean manipulatesFragments) {
+    public AuthTransitions(AppCompatActivity activity, boolean manipulatesFragments) {
         this.activity = activity;
         if (manipulatesFragments) {
             this.manager = activity.getSupportFragmentManager();
@@ -59,4 +59,5 @@ public class TransitionsH {
             activity.startActivity(new Intent(activity.getApplicationContext(), AuthActivity.class));
             activity.finish();
     }
+
 }

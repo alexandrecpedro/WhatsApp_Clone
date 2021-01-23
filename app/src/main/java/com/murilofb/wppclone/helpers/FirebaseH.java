@@ -2,11 +2,14 @@ package com.murilofb.wppclone.helpers;
 
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
@@ -16,12 +19,22 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.models.UserModel;
+import com.murilofb.wppclone.settings.SettingsActivity;
+import com.murilofb.wppclone.settings.SettingsH;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Observable;
+import java.util.concurrent.atomic.LongAdder;
 
 public class FirebaseH extends Observable {
 
@@ -40,7 +53,8 @@ public class FirebaseH extends Observable {
                 removeListener();
             }
         };
-        public static final String ARG_AUTH = "auth";
+        public static final String ARG_LOGIN = "login";
+        public static final String ARG_SIGNUP = "signup";
         public static final String ARG_SIGN_OUT = "authOut";
         private ToastH toast;
         private Activity activity;
@@ -56,7 +70,6 @@ public class FirebaseH extends Observable {
             return auth.getCurrentUser().getUid();
         }
 
-
         public void signUp(UserModel model) {
             auth.createUserWithEmailAndPassword(model.getEmail(), model.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -64,7 +77,7 @@ public class FirebaseH extends Observable {
                     if (task.isSuccessful()) {
                         Log.i("Auth", "SignUpSuccess");
                         new RealtimeDatabase().putUserData(model);
-                        updateChanges(ARG_AUTH);
+                        updateChanges(ARG_SIGNUP);
                     } else {
                         Log.i("Auth", "SignUpFailure");
                         String message = "";
@@ -92,7 +105,7 @@ public class FirebaseH extends Observable {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         Log.i("Auth", "LoginSuccess");
-                        updateChanges(ARG_AUTH);
+                        updateChanges(ARG_LOGIN);
                     } else {
                         String message = "";
                         try {
@@ -105,7 +118,6 @@ public class FirebaseH extends Observable {
                         }
                         toast.showToast(message);
                     }
-
                 }
             });
         }
@@ -124,7 +136,7 @@ public class FirebaseH extends Observable {
 
         public void signOutUser() {
             auth.signOut();
-            Log.i("FirebaseH", "SignOutUser");
+
         }
     }
 
@@ -132,19 +144,68 @@ public class FirebaseH extends Observable {
         private final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
         private final DatabaseReference userReference = rootReference.child("users")
                 .child(new Auth(null).getUserUid());
+        private final DatabaseReference userDataReference = userReference.child("userData");
+        private final DatabaseReference uploadedImages = userReference.child("uploadedImages");
+        //public static final String ARG_LOAD_USER_DATA = "userData";
+
+        public void loadUserInfo() {
+            userDataReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    UserModel.setCurrentUser(snapshot.getValue(UserModel.class));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+        }
 
         protected void putUserData(UserModel model) {
-            userReference.child("userData").setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+            userDataReference.setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        Log.i("RealtimeDatabase", "Foi");
                     } else {
-                        Log.i("RealtimeDatabase", "NãoFoi");
                     }
                 }
             });
         }
+
+        protected void putProfileImage(String path, String downloadLink) {
+            userDataReference.child("profileImgLink").setValue(downloadLink);
+            uploadedImages.child("profileImg").setValue(path);
+        }
+    }
+
+    public class StorageH {
+        private final StorageReference rootRef = FirebaseStorage.getInstance().getReference();
+        private final StorageReference userProfileRef = rootRef.child("images")
+                .child("profilePic")
+                .child(new Auth(null).getUserUid() + ".jpeg");
+
+        public void uploadProfileImage(Bitmap bitmap) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            userProfileRef.putBytes(baos.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        userProfileRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                new RealtimeDatabase().putProfileImage(userProfileRef.getPath(), task.getResult().toString());
+                                bitmap.recycle();
+                            }
+                        });
+
+                    }
+                }
+            });
+
+
+        }
+
     }
 }
 

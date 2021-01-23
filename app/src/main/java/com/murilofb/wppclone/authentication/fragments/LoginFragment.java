@@ -2,7 +2,6 @@ package com.murilofb.wppclone.authentication.fragments;
 
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.murilofb.wppclone.authentication.AuthActivity;
-import com.murilofb.wppclone.helpers.TransitionsH;
+import com.murilofb.wppclone.authentication.AuthTransitions;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.helpers.Base64H;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.ToastH;
-import com.murilofb.wppclone.home.HomeActivity;
 
 
 public class LoginFragment extends Fragment {
@@ -29,7 +27,7 @@ public class LoginFragment extends Fragment {
     private EditText edtLoginEmail;
     private EditText edtLoginPassword;
     private FirebaseH.Auth auth;
-    private TransitionsH transaction;
+    private AuthTransitions transaction;
     private ToastH toast;
 
     public LoginFragment() {
@@ -53,7 +51,7 @@ public class LoginFragment extends Fragment {
         edtLoginPassword = view.findViewById(R.id.edtLoginPassword);
 
         toast = new ToastH(getActivity());
-        transaction = new TransitionsH((AppCompatActivity) getActivity(),true);
+        transaction = new AuthTransitions((AppCompatActivity) getActivity(),true);
         AuthActivity authActivity = (AuthActivity) getActivity();
         FirebaseH firebaseH = new FirebaseH();
         firebaseH.addObserver(authActivity);
