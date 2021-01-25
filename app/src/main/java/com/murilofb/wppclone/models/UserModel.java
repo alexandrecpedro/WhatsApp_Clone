@@ -5,6 +5,8 @@ import android.net.Uri;
 import com.google.firebase.database.Exclude;
 import com.murilofb.wppclone.helpers.FirebaseH;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,12 +18,14 @@ public class UserModel extends Observable {
     private String userName;
     @Exclude
     private static UserModel currentUser;
+    @Exclude
+    private static List<UserModel> friendsList = new ArrayList<>();
 
     public UserModel(String name, String email, String password) {
         this.name = name;
+        this.userName = name;
         this.password = password;
         this.email = email;
-
     }
 
     public UserModel() {
@@ -53,13 +57,23 @@ public class UserModel extends Observable {
         realtimeDatabase.loadUserInfo();
     }
 
+    @Exclude
     public static UserModel getCurrentUser() {
         return currentUser;
     }
 
+    @Exclude
     public static void setCurrentUser(UserModel currentUser) {
         UserModel.currentUser = currentUser;
     }
 
+    @Exclude
+    public static List<UserModel> getFriendsList() {
+        return friendsList;
+    }
 
+    @Exclude
+    public static void setFriendsList(List<UserModel> friendsList) {
+        UserModel.friendsList = friendsList;
+    }
 }

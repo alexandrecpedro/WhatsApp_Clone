@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WppClone</string>
+    <string name="app_name">ZipZop</string>
     <!-- Authentication -->
     <!-- LoginFrag -->
     <string name="hint_login_email">Type your e-mail</string>
@@ -32,6 +32,7 @@
     <string name="explained_username">This is how you will appear to your contacts</string>
     <string name="welcome_title">First Steps</string>
     <string name="welcome_message">Choose a profile image and a username (you can edit this later)</string>
+    <string name="username_title">Username</string>
     <string name="toast_need_camera_permission">You need to give the camera permission to the app</string>
     <string name="toast_need_storage_permission">You need to give the permission to access external storage</string>
     <!-- Dialog -->
@@ -41,4 +42,8 @@
     <string name="txt_from_camera">Camera</string>
     <string name="error_pick_from_gallery">Unable to open your gallery</string>
     <string name="error_pick_from_camera">Unable to open your camera</string>
+    <!-- Dialog UserName -->
+    <string name="dialog_edt_username_title">Edit Username</string>
+    <string name="dialog_edt_username_positive">Save</string>
+    <string name="dialog_edt_username_negative">Cancel</string>
 </resources>

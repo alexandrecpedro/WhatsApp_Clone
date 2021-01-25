@@ -12,13 +12,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
 
 import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
@@ -26,11 +25,11 @@ import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.SecurityH;
 import com.murilofb.wppclone.models.UserModel;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Observable;
-import java.util.Observer;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,7 +39,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private FloatingActionButton fabEditPic;
     private static CircleImageView editUserImage;
-    private static EditText edtChangeUserNick;
+    private ImageButton imgBtnEditUserName;
+    private static TextView txtUserName;
+
     private SettingsH settingsH;
     private SecurityH.PermissionsH permissionsH;
     private static boolean isShow = false;
@@ -51,8 +52,9 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         fabEditPic = findViewById(R.id.fabEditPic);
         editUserImage = findViewById(R.id.editUserImage);
-        edtChangeUserNick = findViewById(R.id.edtChangeUserNick);
-
+        //edtChangeUserNick = findViewById(R.id.edtChangeUserNick);
+        imgBtnEditUserName = findViewById(R.id.edtUserNameButton);
+        txtUserName = findViewById(R.id.txtSettingsUserName);
 
         settingsH = new SettingsH(this);
         permissionsH = new SecurityH.PermissionsH(this);
@@ -68,9 +70,9 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             UserModel currentUser = UserModel.getCurrentUser();
-            Log.i("FirebaseH", "profilePic: " + currentUser.getProfileImgLink());
+
             if (currentUser != null) {
-                edtChangeUserNick.setText(currentUser.getName());
+                txtUserName.setText(currentUser.getUserName());
                 Glide.with(SettingsActivity.this)
                         .load(currentUser.getProfileImgLink())
                         .placeholder(R.drawable.default_user_but_round)
@@ -97,6 +99,8 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private String from = "";
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -108,28 +112,40 @@ public class SettingsActivity extends AppCompatActivity {
             switch (requestCode) {
                 case SettingsH.REQUEST_GALLERY_IMG:
                     imgUri = data.getData();
-                    try {
-                        imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    from = "gallery";
+                    CropImage.activity(imgUri)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio(1, 1)
+                            .start(this);
                     break;
                 case SettingsH.REQUEST_CAMERA_IMG:
                     imgUri = Uri.fromFile(new File(SettingsH.getCameraPath()));
+                    from = "camera";
+                    CropImage.activity(imgUri)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio(1, 1)
+                            .start(this);
+                    break;
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    imgUri = result.getUri();
                     try {
                         imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    settingsH.dismissDialog();
                     break;
             }
+
             if (imageBitmap != null) {
+                Log.i("SettingsH", "nonNUll Bitmap");
                 editUserImage.setImageBitmap(imageBitmap);
                 FirebaseH firebaseH = new FirebaseH();
                 FirebaseH.StorageH storageH = firebaseH.new StorageH();
-                storageH.uploadProfileImage(imageBitmap);
+                storageH.uploadProfileImage(imageBitmap, from);
             }
-            settingsH.dismissDialog();
+
         }
     }
 
@@ -143,16 +159,27 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-
     private void setClickListener() {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                settingsH.showPhotoOptionsDialog();
+                switch (v.getId()) {
+                    case R.id.edtUserNameButton:
+                        settingsH.showEditUserNameDialog();
+                        break;
+                    case R.id.fabEditPic:
+                        settingsH.showPhotoOptionsDialog();
+                        break;
+                }
+
             }
         };
         fabEditPic.setOnClickListener(clickListener);
+        imgBtnEditUserName.setOnClickListener(clickListener);
     }
 
+    public static void updateUserName(String newUserName) {
+        txtUserName.setText(newUserName);
+    }
 
 }

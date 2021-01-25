@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WppClone</string>
+    <string name="app_name">ZipZop</string>
     <!-- Authentication -->
     <!-- LoginFrag -->
     <string name="hint_login_email">Digite seu e-mail</string>
@@ -33,13 +33,18 @@
     <string name="explained_username">Esse nome será exibido para seus contatos</string>
     <string name="welcome_title">Primeiros passos</string>
     <string name="welcome_message">Escolha uma imagem de perfil e um nome de usuário (você pode edita-los depois)</string>
+    <string name="username_title">Nome de Usuário</string>
     <string name="toast_need_camera_permission">Você precisa permitir o acesso a câmera ao app</string>
     <string name="toast_need_storage_permission">Você precisa permitir o acesso ao armazenamento ao app</string>
-    <!-- Dialog -->
+    <!-- Dialog Image -->
     <string name="dialog_settings_title">Escolha uma opção</string>
     <string name="txt_remove_photo">Remover Foto</string>
     <string name="txt_from_gallery">Gallery</string>
     <string name="txt_from_camera">Camera</string>
     <string name="error_pick_from_gallery">Não foi possível abrir a galeria</string>
     <string name="error_pick_from_camera">Não foi possível abrir a camera</string>
+    <!-- Dialog UserName -->
+    <string name="dialog_edt_username_title">Alternar nome de usuário</string>
+    <string name="dialog_edt_username_positive">Alterar</string>
+    <string name="dialog_edt_username_negative">Cancelar</string>
 </resources>

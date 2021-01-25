@@ -54,7 +54,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/leper_affliction"
-        app:layout_constraintBottom_toTopOf="@id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@id/layoutEditName"
         app:layout_constraintEnd_toEndOf="@id/guideEnd"
         app:layout_constraintStart_toStartOf="@id/guideStart"
         app:layout_constraintTop_toBottomOf="@id/linearTop" />
@@ -72,36 +72,78 @@
         app:layout_constraintEnd_toEndOf="@id/editUserImage" />
 
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutEditName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@id/guideEnd"
         app:layout_constraintStart_toStartOf="@id/guideStart"
         app:layout_constraintTop_toBottomOf="@id/editUserImage">
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/icPerson"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_person"
+            app:layout_constraintBottom_toBottomOf="@id/txtSettingsUserName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/txtNameTitle"
+            app:tint="?attr/colorControlNormal" />
 
-            <EditText
-                android:id="@+id/edtChangeUserNick"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableRight="@drawable/ic_edit"
-                android:drawableTint="?attr/colorControlNormal"
-                android:hint="@string/hint_user_name"
-                android:inputType="textCapSentences" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/txtNameTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/explained_username"
-            android:textColor="@android:color/black" />
-    </LinearLayout>
+            android:layout_marginLeft="10dp"
+            android:text="@string/username_title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/icPerson"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtSettingsUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/icPerson"
+            app:layout_constraintTop_toBottomOf="@id/txtNameTitle" />
+
+        <ImageView
+            android:id="@+id/icEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="@id/txtSettingsUserName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/txtSettingsUserName"
+            app:layout_constraintTop_toTopOf="@id/txtNameTitle"
+            app:tint="@color/light_gray" />
+
+        <ImageButton
+            android:id="@+id/edtUserNameButton"
+            android:layout_width="match_parent"
+            android:elevation="8dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/explained_username"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        app:layout_constraintStart_toStartOf="@id/guideStart"
+        app:layout_constraintTop_toBottomOf="@id/layoutEditName" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

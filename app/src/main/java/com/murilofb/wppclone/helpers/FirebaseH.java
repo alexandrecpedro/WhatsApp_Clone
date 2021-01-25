@@ -9,13 +9,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -28,13 +25,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
+import com.murilofb.wppclone.adapters.MessagesAdapter;
+import com.murilofb.wppclone.home.tabs.MessagesTab;
 import com.murilofb.wppclone.models.UserModel;
-import com.murilofb.wppclone.settings.SettingsActivity;
-import com.murilofb.wppclone.settings.SettingsH;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
-import java.util.concurrent.atomic.LongAdder;
 
 public class FirebaseH extends Observable {
 
@@ -141,12 +139,14 @@ public class FirebaseH extends Observable {
     }
 
     public class RealtimeDatabase {
+        public static final String ARG_ATT_CONTACTS = "attCont";
         private final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
         private final DatabaseReference userReference = rootReference.child("users")
                 .child(new Auth(null).getUserUid());
         private final DatabaseReference userDataReference = userReference.child("userData");
         private final DatabaseReference uploadedImages = userReference.child("uploadedImages");
-        //public static final String ARG_LOAD_USER_DATA = "userData";
+        private final DatabaseReference userFriendsReference = userReference.child("friends");
+
 
         public void loadUserInfo() {
             userDataReference.addValueEventListener(new ValueEventListener() {
@@ -159,6 +159,35 @@ public class FirebaseH extends Observable {
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
+        }
+
+        public void loadFriendsList() {
+
+            userFriendsReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.i("Messages", "loadFriendsList");
+                    List<UserModel> newFriendsList = new ArrayList<>();
+                    for (DataSnapshot item : snapshot.getChildren()) {
+                        newFriendsList.add(item.getValue(UserModel.class));
+                        Log.i("Messages", "name: " + item.getValue(UserModel.class).getName());
+                        Log.i("Messages", "nick: " + item.getValue(UserModel.class).getUserName());
+                    }
+                    UserModel.setFriendsList(newFriendsList);
+                    MessagesTab.notifyAdapter();
+                    updateChanges(ARG_ATT_CONTACTS);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        public void changeUserName(String newUserName) {
+            userDataReference.child("userName").setValue(newUserName);
         }
 
         protected void putUserData(UserModel model) {
@@ -184,9 +213,14 @@ public class FirebaseH extends Observable {
                 .child("profilePic")
                 .child(new Auth(null).getUserUid() + ".jpeg");
 
-        public void uploadProfileImage(Bitmap bitmap) {
+        public void uploadProfileImage(Bitmap bitmap, String from) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            if (from.equals("camera")) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+            } else if (from.equals("gallery")) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 70, baos);
+            }
+
             userProfileRef.putBytes(baos.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {

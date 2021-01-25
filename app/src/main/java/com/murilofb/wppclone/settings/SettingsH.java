@@ -2,24 +2,33 @@ package com.murilofb.wppclone.settings;
 
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.murilofb.wppclone.R;
+import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.SecurityH;
 import com.murilofb.wppclone.helpers.ToastH;
+import com.murilofb.wppclone.models.UserModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,11 +45,12 @@ public class SettingsH {
 
     public SettingsH(AppCompatActivity activity) {
         this.activity = activity;
-        this.builder = new AlertDialog.Builder(activity).create();
+        builder = new AlertDialog.Builder(activity).create();
         toastH = new ToastH(activity);
     }
 
     public void showPhotoOptionsDialog() {
+
         View view = activity.getLayoutInflater().inflate(R.layout.dialog_new_picture, null, false);
         ImageButton imgBtnRemovePhoto = view.findViewById(R.id.imgBtnRemovePhoto);
         ImageButton imgBtnTakePhoto = view.findViewById(R.id.imgBtnTakePhoto);
@@ -75,6 +85,25 @@ public class SettingsH {
         builder.setTitle(activity.getString(R.string.dialog_settings_title));
         builder.setView(view);
         builder.show();
+    }
+
+
+    public void showEditUserNameDialog() {
+        UserModel currentUser = UserModel.getCurrentUser();
+        View layoutView = activity.getLayoutInflater().inflate(R.layout.edit_text_simple, null, false);
+        EditText edtNewUserName = layoutView.findViewById(R.id.editText);
+        if (currentUser != null) {
+            edtNewUserName.setText(currentUser.getUserName());
+        }
+        AlertDialog.Builder dialogUserName = new AlertDialog.Builder(activity);
+        dialogUserName.setView(layoutView);
+        dialogUserName.setTitle(activity.getString(R.string.dialog_edt_username_title));
+        dialogUserName.setPositiveButton(activity.getString(R.string.dialog_edt_username_positive), (dialog, which) -> {
+            new FirebaseH().new RealtimeDatabase().changeUserName(edtNewUserName.getText().toString());
+            SettingsActivity.updateUserName(edtNewUserName.getText().toString());
+        });
+        dialogUserName.setNegativeButton(activity.getString(R.string.dialog_edt_username_negative), null);
+        dialogUserName.show();
     }
 
     public void dismissDialog() {
