@@ -47,4 +47,6 @@
     <string name="dialog_edt_username_title">Alternar nome de usuário</string>
     <string name="dialog_edt_username_positive">Alterar</string>
     <string name="dialog_edt_username_negative">Cancelar</string>
+    <!-- ChatAct -->
+    <string name="hint_new_message">Digite uma mensagem</string>
 </resources>

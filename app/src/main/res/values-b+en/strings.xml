@@ -46,4 +46,6 @@
     <string name="dialog_edt_username_title">Edit Username</string>
     <string name="dialog_edt_username_positive">Save</string>
     <string name="dialog_edt_username_negative">Cancel</string>
+    <!-- ChatAct -->
+    <string name="hint_new_message">Type a message</string>
 </resources>

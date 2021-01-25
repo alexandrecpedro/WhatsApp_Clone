@@ -5,12 +5,13 @@ import android.net.Uri;
 import com.google.firebase.database.Exclude;
 import com.murilofb.wppclone.helpers.FirebaseH;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class UserModel extends Observable {
+public class UserModel extends Observable implements Serializable {
     private String name;
     private String password;
     private String email;

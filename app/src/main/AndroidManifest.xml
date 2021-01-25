@@ -39,6 +39,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.WppClone.NoActionBar"></activity>
         <activity
+            android:name=".chat.ChatActivity"
+            android:parentActivityName=".home.HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.WppClone.NoActionBar" />
+        <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings_act_label"
             android:screenOrientation="portrait"

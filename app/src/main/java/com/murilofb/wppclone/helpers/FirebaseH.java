@@ -25,8 +25,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
-import com.murilofb.wppclone.adapters.MessagesAdapter;
-import com.murilofb.wppclone.home.tabs.MessagesTab;
 import com.murilofb.wppclone.models.UserModel;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +44,6 @@ public class FirebaseH extends Observable {
         private FirebaseAuth auth = FirebaseAuth.getInstance();
         private final FirebaseAuth.AuthStateListener signOutListener = firebaseAuth -> {
             if (firebaseAuth.getCurrentUser() == null) {
-                Log.i("FirebaseH", "user null");
                 updateChanges(ARG_SIGN_OUT);
                 removeListener();
             }
@@ -140,6 +137,7 @@ public class FirebaseH extends Observable {
 
     public class RealtimeDatabase {
         public static final String ARG_ATT_CONTACTS = "attCont";
+        private List<UserModel> friendsList = new ArrayList<>();
         private final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
         private final DatabaseReference userReference = rootReference.child("users")
                 .child(new Auth(null).getUserUid());
@@ -166,17 +164,11 @@ public class FirebaseH extends Observable {
             userFriendsReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Log.i("Messages", "loadFriendsList");
-                    List<UserModel> newFriendsList = new ArrayList<>();
+                    friendsList.clear();
                     for (DataSnapshot item : snapshot.getChildren()) {
-                        newFriendsList.add(item.getValue(UserModel.class));
-                        Log.i("Messages", "name: " + item.getValue(UserModel.class).getName());
-                        Log.i("Messages", "nick: " + item.getValue(UserModel.class).getUserName());
+                        friendsList.add(item.getValue(UserModel.class));
                     }
-                    UserModel.setFriendsList(newFriendsList);
-                    MessagesTab.notifyAdapter();
                     updateChanges(ARG_ATT_CONTACTS);
-
                 }
 
                 @Override
@@ -184,6 +176,10 @@ public class FirebaseH extends Observable {
 
                 }
             });
+        }
+
+        public List<UserModel> getFriendsList() {
+            return friendsList;
         }
 
         public void changeUserName(String newUserName) {
