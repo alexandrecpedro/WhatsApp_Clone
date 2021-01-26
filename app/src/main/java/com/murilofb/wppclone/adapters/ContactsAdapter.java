@@ -18,7 +18,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MessagesViewHolder> {
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
     private List<UserModel> friendsList;
     private Context context;
     private onRecyclerClick recyclerClick;
@@ -31,13 +31,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Messag
 
     @NonNull
     @Override
-    public MessagesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_messages, parent, false);
-        return new MessagesViewHolder(view, recyclerClick);
+    public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_contacts, parent, false);
+        return new ContactsViewHolder(view, recyclerClick);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessagesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ContactsViewHolder holder, int position) {
         UserModel friend = friendsList.get(position);
         holder.txtName.setText(friend.getName());
         holder.txtUserName.setText("@" + friend.getUserName());
@@ -55,13 +55,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Messag
         return friendsList.size();
     }
 
-    public class MessagesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView profilePhoto;
         TextView txtName;
         TextView txtUserName;
         onRecyclerClick recyclerClick;
 
-        public MessagesViewHolder(@NonNull View itemView, onRecyclerClick recyclerClick) {
+        public ContactsViewHolder(@NonNull View itemView, onRecyclerClick recyclerClick) {
             super(itemView);
             profilePhoto = itemView.findViewById(R.id.contactProfilePhoto);
             txtName = itemView.findViewById(R.id.contactName);

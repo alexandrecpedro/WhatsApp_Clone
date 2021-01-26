@@ -8,7 +8,13 @@
 
     <style name="Theme.WppClone.NoActionBar" parent="Theme.WppClone">
         <item name="windowActionBar">false</item>
+
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="ChatBackground" parent="Theme.WppClone.NoActionBar">
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowBackground">@drawable/wpp_default_bg</item>
     </style>
 
 </resources>

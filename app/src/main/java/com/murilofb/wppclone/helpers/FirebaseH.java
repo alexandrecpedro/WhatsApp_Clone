@@ -2,6 +2,8 @@ package com.murilofb.wppclone.helpers;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
@@ -20,11 +22,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
+import com.murilofb.wppclone.chat.ChatActivity;
+import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
 import java.io.ByteArrayOutputStream;
@@ -65,12 +70,16 @@ public class FirebaseH extends Observable {
             return auth.getCurrentUser().getUid();
         }
 
+        protected String getUserEmail() {
+            return auth.getCurrentUser().getEmail();
+        }
+
         public void signUp(UserModel model) {
             auth.createUserWithEmailAndPassword(model.getEmail(), model.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Log.i("Auth", "SignUpSuccess");
+                        model.setUserId(auth.getCurrentUser().getUid());
                         new RealtimeDatabase().putUserData(model);
                         updateChanges(ARG_SIGNUP);
                     } else {
@@ -137,14 +146,29 @@ public class FirebaseH extends Observable {
 
     public class RealtimeDatabase {
         public static final String ARG_ATT_CONTACTS = "attCont";
+        public static final String ARG_ATT_MESSAGES = "attMsg";
         private List<UserModel> friendsList = new ArrayList<>();
+        private List<MessageModel> messagesList = new ArrayList<>();
         private final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-        private final DatabaseReference userReference = rootReference.child("users")
+        private final DatabaseReference usersReference = rootReference.child("users");
+        private final DatabaseReference currentUserReference = usersReference
                 .child(new Auth(null).getUserUid());
-        private final DatabaseReference userDataReference = userReference.child("userData");
-        private final DatabaseReference uploadedImages = userReference.child("uploadedImages");
-        private final DatabaseReference userFriendsReference = userReference.child("friends");
+        private final DatabaseReference userDataReference = currentUserReference.child("userData");
+        private final DatabaseReference userMessagesReference = currentUserReference.child("messages");
+        private final DatabaseReference uploadedImages = currentUserReference.child("uploadedImages");
+        private final DatabaseReference userFriendsReference = currentUserReference.child("friends");
+        private Activity activity;
+        private ToastH toastH;
 
+        public RealtimeDatabase(Activity activity) {
+            if (activity != null) {
+                toastH = new ToastH(activity);
+            }
+            this.activity = activity;
+        }
+
+        public RealtimeDatabase() {
+        }
 
         public void loadUserInfo() {
             userDataReference.addValueEventListener(new ValueEventListener() {
@@ -160,15 +184,65 @@ public class FirebaseH extends Observable {
         }
 
         public void loadFriendsList() {
-
             userFriendsReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     friendsList.clear();
+                    Log.i("friendSearch", snapshot.getKey());
                     for (DataSnapshot item : snapshot.getChildren()) {
-                        friendsList.add(item.getValue(UserModel.class));
+                        Log.i("friendSearch", item.getKey());
+                        usersReference.child(item.getKey()).child("userData").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Log.i("friendSearch", snapshot.getKey());
+                                friendsList.add(snapshot.getValue(UserModel.class));
+                                updateChanges(ARG_ATT_CONTACTS);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
                     }
-                    updateChanges(ARG_ATT_CONTACTS);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        public void findUserByEmail(String email, AlertDialog alertDialog) {
+            Query emailQuery = usersReference.orderByChild("userData/email").equalTo(email);
+            emailQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getValue() == null) {
+                        toastH.showToast("null");
+                    } else {
+
+                        for (DataSnapshot item : snapshot.getChildren()) {
+                            Log.i("friendSearch", item.getKey());
+                            String foundEmail = item.child("userData").child("email").getValue().toString();
+                            if (foundEmail.equals(new Auth(null).getUserEmail())) {
+                                toastH.showToast(activity.getString(R.string.toast_new_contact_same_email));
+                            } else {
+                                UserModel foundFriend = item.child("userData").getValue(UserModel.class);
+                                Intent i = new Intent(activity.getApplicationContext(), ChatActivity.class);
+                                i.putExtra("friend", foundFriend);
+                                i.putExtra("friendKey", item.getKey());
+                                i.putExtra("isFriendAlready", false);
+                                activity.startActivity(i);
+                                alertDialog.dismiss();
+                            }
+                            break;
+                        }
+
+                    }
                 }
 
                 @Override
@@ -180,6 +254,51 @@ public class FirebaseH extends Observable {
 
         public List<UserModel> getFriendsList() {
             return friendsList;
+        }
+
+        public void addFriend(String key, String email) {
+            currentUserReference.child("friends").child(key).setValue(email);
+
+        }
+
+        public void sendMessage(MessageModel message, String to) {
+            //Adicionando a minha Db como mensagem mandada
+            userMessagesReference.child(to).push().setValue(message);
+            message.setSent(false);
+            //Adicionando a db do outro usuário como mensagem recebida
+            usersReference.child(to)
+                    .child("messages")
+                    .child(new Auth(null).getUserUid())
+                    .push()
+                    .setValue(message);
+        }
+
+        public void loadMessages(String from) {
+            Query messagesQuery = userMessagesReference.child(from).orderByChild("messageTime");
+            messagesQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    messagesList.clear();
+                    Log.i("Messages", snapshot.getKey());
+                    for (DataSnapshot item : snapshot.getChildren()) {
+
+                        MessageModel message = item.getValue(MessageModel.class);
+
+                        messagesList.add(message);
+                    }
+                    updateChanges(ARG_ATT_MESSAGES);
+                    Log.i("Messages", "UpdateChanges");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        public List<MessageModel> getMessagesList() {
+            return messagesList;
         }
 
         public void changeUserName(String newUserName) {
@@ -224,7 +343,7 @@ public class FirebaseH extends Observable {
                         userProfileRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
-                                new RealtimeDatabase().putProfileImage(userProfileRef.getPath(), task.getResult().toString());
+                                new RealtimeDatabase(null).putProfileImage(userProfileRef.getPath(), task.getResult().toString());
                                 bitmap.recycle();
                             }
                         });

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.adapters.ContactsAdapter;
 import com.murilofb.wppclone.chat.ChatActivity;
@@ -26,8 +27,9 @@ import java.util.Observer;
 
 public class ContactsTab extends Fragment implements Observer {
     private RecyclerView recyclerContacts;
-
     private static ContactsAdapter adapter;
+    private ContactsH contactsH;
+    private FloatingActionButton fabAddFriend;
 
     public ContactsTab() {
     }
@@ -40,6 +42,9 @@ public class ContactsTab extends Fragment implements Observer {
         firebaseH.addObserver(this);
         FirebaseH.RealtimeDatabase database = firebaseH.new RealtimeDatabase();
         database.loadFriendsList();
+        contactsH = new ContactsH(getActivity());
+        fabAddFriend = view.findViewById(R.id.fabAddFriend);
+        fabAddFriend.setOnClickListener(v -> contactsH.addFriend());
 
         adapter = new ContactsAdapter(database.getFriendsList(), getContext(), new ContactsAdapter.onRecyclerClick() {
             @Override

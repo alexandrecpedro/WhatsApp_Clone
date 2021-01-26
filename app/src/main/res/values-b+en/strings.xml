@@ -22,6 +22,12 @@
     <string name="title_messages_frag">Messages</string>
     <!-- ContactsFrag -->
     <string name="title_contacts_frag">Contacts</string>
+    <string name="dialog_title_new_contact">New contact</string>
+    <string name="dialog_message_new_contact">When you send a message this e-mail will be saved in your contacts</string>
+    <string name="dialog_new_contact_positive">Add</string>
+    <string name="dialog_new_contact_negative">Cancel</string>
+    <string name="toast_new_contact_empty">You must fill the field first</string>
+    <string name="toast_new_contact_same_email">You can\'t send message to yourself</string>
     <!-- Menu Itens -->
     <string name="menu_signout">Exit</string>
     <string name="menu_settings">Settings</string>

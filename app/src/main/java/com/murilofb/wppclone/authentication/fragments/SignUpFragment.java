@@ -57,11 +57,9 @@ public class SignUpFragment extends Fragment {
         View.OnClickListener clickListener = v -> {
             if (v.getId() == R.id.btnSignup) {
                 if (validateEditText()) {
-                    Log.i("SignUp", "notEmpty");
                     String signUpName = edtSignUpName.getText().toString();
                     String signUpEmail = edtSignUpEmail.getText().toString();
                     String signUpPassword = edtSignUpPassword.getText().toString();
-
                     UserModel model = new UserModel(signUpName, signUpEmail, Base64H.encode(signUpPassword));
                     auth.signUp(model);
                 } else {

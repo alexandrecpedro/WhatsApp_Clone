@@ -17,10 +17,10 @@ public class UserModel extends Observable implements Serializable {
     private String email;
     private String profileImgLink;
     private String userName;
+    private String userId;
     @Exclude
     private static UserModel currentUser;
-    @Exclude
-    private static List<UserModel> friendsList = new ArrayList<>();
+
 
     public UserModel(String name, String email, String password) {
         this.name = name;
@@ -68,13 +68,11 @@ public class UserModel extends Observable implements Serializable {
         UserModel.currentUser = currentUser;
     }
 
-    @Exclude
-    public static List<UserModel> getFriendsList() {
-        return friendsList;
+    public String getUserId() {
+        return userId;
     }
 
-    @Exclude
-    public static void setFriendsList(List<UserModel> friendsList) {
-        UserModel.friendsList = friendsList;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

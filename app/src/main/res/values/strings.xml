@@ -22,6 +22,12 @@
     <string name="title_messages_frag">Mensagens</string>
     <!-- ContactsFrag -->
     <string name="title_contacts_frag">Contatos</string>
+    <string name="dialog_title_new_contact">Novo contato</string>
+    <string name="dialog_message_new_contact">Ao mandar uma mensagem este email será salvo em seus contatos</string>
+    <string name="dialog_new_contact_positive">Adicionar</string>
+    <string name="dialog_new_contact_negative">Cancelar</string>
+    <string name="toast_new_contact_empty">Você deve preencher o campo primeiro</string>
+    <string name="toast_new_contact_same_email">Não dá para mandar menssagem para si mesmo</string>
     <!-- Menu Itens -->
     <string name="menu_signout">Sair</string>
     <string name="menu_settings">Configurações</string>
@@ -47,6 +53,7 @@
     <string name="dialog_edt_username_title">Alternar nome de usuário</string>
     <string name="dialog_edt_username_positive">Alterar</string>
     <string name="dialog_edt_username_negative">Cancelar</string>
+
     <!-- ChatAct -->
     <string name="hint_new_message">Digite uma mensagem</string>
 </resources>

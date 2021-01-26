@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarChat"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
+            android:theme="?actionBarTheme">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgChatFriendPhoto"
@@ -33,10 +42,15 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
+        android:id="@+id/layoutRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/wpp_default_bg"
+        android:layout_below="@id/appBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+
+        android:layout_alignParentBottom="true"
         android:padding="10dp">
 
 
@@ -44,26 +58,27 @@
             android:id="@+id/recyclerMessages"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/layoutNewMessage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_above="@id/layoutNewMessage"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:descendantFocusability="beforeDescendants" />
 
         <LinearLayout
             android:id="@+id/layoutNewMessage"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_alignTop="@id/imgBtnSendMessage"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="6dp"
+            android:layout_toLeftOf="@id/imgBtnSendMessage"
             android:background="@drawable/rounded_button_white"
             android:elevation="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="16dp"
-            android:layout_marginRight="6dp"
-            android:paddingRight="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/fabSend"
-            app:layout_constraintEnd_toStartOf="@id/fabSend"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/fabSend">
+            android:paddingRight="16dp">
 
             <EditText
                 android:id="@+id/edtNewMessage"
@@ -73,8 +88,8 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:drawablePadding="5dp"
-                android:inputType="textCapSentences"
                 android:hint="@string/hint_new_message"
+                android:inputType="textCapSentences"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:singleLine="false" />
@@ -82,21 +97,21 @@
             <ImageButton
                 android:id="@+id/imgBtnSendPhoto"
                 android:layout_width="30dp"
-                android:scaleType="fitXY"
                 android:layout_height="30dp"
                 android:background="@android:color/transparent"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_camera"
                 android:tint="?attr/colorControlNormal" />
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/fabSend"
+            android:id="@+id/imgBtnSendMessage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:background="@drawable/rounded_button_green"
             android:elevation="2dp"
-            android:src="@drawable/ic_send"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+            android:src="@drawable/ic_send" />
+    </RelativeLayout>
+</RelativeLayout>
