@@ -11,17 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.core.Context;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.models.MessageModel;
 
 import java.util.List;
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessagesViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessagesViewHolder> {
     private List<MessageModel> messagesList;
 
 
-    public MessagesAdapter(List<MessageModel> messagesList) {
+    public ChatAdapter(List<MessageModel> messagesList) {
         this.messagesList = messagesList;
     }
 
