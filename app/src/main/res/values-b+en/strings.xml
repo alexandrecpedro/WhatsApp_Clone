@@ -54,4 +54,5 @@
     <string name="dialog_edt_username_negative">Cancel</string>
     <!-- ChatAct -->
     <string name="hint_new_message">Type a message</string>
+    <string name="toast_empty_message">Type a message first</string>
 </resources>

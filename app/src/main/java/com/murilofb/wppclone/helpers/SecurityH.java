@@ -3,6 +3,7 @@ package com.murilofb.wppclone.helpers;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -46,13 +47,30 @@ public class SecurityH {
             }
         }
 
-        public boolean isCameraPermitted() {
-            return permissionsBoolArr[0];
+        public boolean checkCameraPermission() {
+            if (isCameraPermitted()) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(activity, new String[]{CAMERA_PERMISSION}, 0);
+                return false;
+            }
         }
 
+        private boolean isCameraPermitted() {
+            return ContextCompat.checkSelfPermission(activity, CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED;
+        }
 
-        public boolean isExternalStoragePermitted() {
-            return permissionsBoolArr[1];
+        public boolean checkStoragePermission() {
+            if (isStoragePermitted()) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(activity, new String[]{EXTERNAL_STORAGE_PERMISSION}, 0);
+                return false;
+            }
+        }
+
+        private boolean isStoragePermitted() {
+            return ContextCompat.checkSelfPermission(activity, EXTERNAL_STORAGE_PERMISSION) == PackageManager.PERMISSION_GRANTED;
         }
 
 

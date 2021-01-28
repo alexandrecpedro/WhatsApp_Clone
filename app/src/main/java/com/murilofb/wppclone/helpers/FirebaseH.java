@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.chat.ChatActivity;
+import com.murilofb.wppclone.chat.ChatH;
 import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
@@ -36,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.UUID;
 
 public class FirebaseH extends Observable {
 
@@ -149,6 +151,7 @@ public class FirebaseH extends Observable {
         public static final String ARG_ATT_MESSAGES = "attMsg";
         private List<UserModel> friendsList = new ArrayList<>();
         private List<MessageModel> messagesList = new ArrayList<>();
+
         private final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
         private final DatabaseReference usersReference = rootReference.child("users");
         private final DatabaseReference currentUserReference = usersReference
@@ -161,6 +164,7 @@ public class FirebaseH extends Observable {
         private ToastH toastH;
 
         public RealtimeDatabase(Activity activity) {
+            currentUserReference.keepSynced(true);
             if (activity != null) {
                 toastH = new ToastH(activity);
             }
@@ -168,6 +172,7 @@ public class FirebaseH extends Observable {
         }
 
         public RealtimeDatabase() {
+            currentUserReference.keepSynced(true);
         }
 
         public void loadUserInfo() {
@@ -264,6 +269,7 @@ public class FirebaseH extends Observable {
         public void sendMessage(MessageModel message, String to) {
             //Adicionando a minha Db como mensagem mandada
             userMessagesReference.child(to).push().setValue(message);
+
             message.setSent(false);
             //Adicionando a db do outro usuário como mensagem recebida
             usersReference.child(to)
@@ -279,15 +285,11 @@ public class FirebaseH extends Observable {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     messagesList.clear();
-                    Log.i("Messages", snapshot.getKey());
                     for (DataSnapshot item : snapshot.getChildren()) {
-
                         MessageModel message = item.getValue(MessageModel.class);
-
                         messagesList.add(message);
                     }
                     updateChanges(ARG_ATT_MESSAGES);
-                    Log.i("Messages", "UpdateChanges");
                 }
 
                 @Override
@@ -328,6 +330,11 @@ public class FirebaseH extends Observable {
                 .child("profilePic")
                 .child(new Auth(null).getUserUid() + ".jpeg");
 
+        private final StorageReference sentImageRef = rootRef.child("images")
+                .child("sent")
+                .child(new Auth(null).getUserUid())
+                .child(UUID.randomUUID() + ".jpeg");
+
         public void uploadProfileImage(Bitmap bitmap, String from) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             if (from.equals("camera")) {
@@ -355,6 +362,36 @@ public class FirebaseH extends Observable {
 
         }
 
+        public void sendImage(Bitmap bitmap, String from, String to) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if (from.equals("camera")) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+            } else if (from.equals("gallery")) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 70, baos);
+            }
+
+            sentImageRef.putBytes(baos.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        sentImageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                MessageModel message = new MessageModel();
+                                message.setPhotoUrl(task.getResult().toString());
+                                RealtimeDatabase database = new FirebaseH().new RealtimeDatabase();
+                                database.uploadedImages.push().setValue(sentImageRef.getPath());
+                                database.sendMessage(message, to);
+                                bitmap.recycle();
+
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        }
     }
 }
 

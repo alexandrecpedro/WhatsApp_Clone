@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,20 +43,24 @@ public class SettingsH {
     private AppCompatActivity activity;
     private AlertDialog builder;
     private ToastH toastH;
+    private boolean isFromSettings = true;
 
     public SettingsH(AppCompatActivity activity) {
         this.activity = activity;
         builder = new AlertDialog.Builder(activity).create();
         toastH = new ToastH(activity);
+
     }
 
     public void showPhotoOptionsDialog() {
 
         View view = activity.getLayoutInflater().inflate(R.layout.dialog_new_picture, null, false);
+
         ImageButton imgBtnRemovePhoto = view.findViewById(R.id.imgBtnRemovePhoto);
         ImageButton imgBtnTakePhoto = view.findViewById(R.id.imgBtnTakePhoto);
         ImageButton imgBtnOpenGallery = view.findViewById(R.id.imgBtnOpenGallery);
         SecurityH.PermissionsH permissionsH = new SecurityH.PermissionsH(activity);
+
 
         View.OnClickListener optionsClick = v -> {
             switch (v.getId()) {
@@ -64,14 +69,14 @@ public class SettingsH {
                     builder.dismiss();
                     break;
                 case R.id.imgBtnTakePhoto:
-                    if (permissionsH.isCameraPermitted()) {
+                    if (permissionsH.checkCameraPermission()) {
                         pickImageFromCamera();
                     } else {
                         toastH.showToast(activity.getString(R.string.toast_need_camera_permission));
                     }
                     break;
                 case R.id.imgBtnOpenGallery:
-                    if (permissionsH.isExternalStoragePermitted()) {
+                    if (permissionsH.checkStoragePermission()) {
                         pickImageFromGallery();
                     } else {
                         toastH.showToast(activity.getString(R.string.toast_need_storage_permission));

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.authentication.AuthTransitions;
 import com.murilofb.wppclone.helpers.FirebaseH;
@@ -41,7 +42,7 @@ public class HomeActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbarHome);
         setSupportActionBar(toolbar);
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         transitions = new AuthTransitions(this, false);
         FirebaseH firebaseH = new FirebaseH();
         firebaseH.addObserver(this);

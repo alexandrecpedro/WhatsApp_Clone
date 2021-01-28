@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.murilofb.wppclone.R;
+import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
 
@@ -20,14 +21,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
     private List<UserModel> friendsList;
-    private Context context;
+    private List<MessageModel> messagesList;
     private onRecyclerClick recyclerClick;
 
-    public ContactsAdapter(List<UserModel> friendsList, Context context, onRecyclerClick recyclerClick) {
+    public ContactsAdapter(List<UserModel> friendsList, onRecyclerClick recyclerClick) {
         this.friendsList = friendsList;
-        this.context = context;
         this.recyclerClick = recyclerClick;
     }
+
 
     @NonNull
     @Override

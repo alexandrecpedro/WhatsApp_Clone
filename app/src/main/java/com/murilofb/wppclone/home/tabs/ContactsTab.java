@@ -46,7 +46,7 @@ public class ContactsTab extends Fragment implements Observer {
         fabAddFriend = view.findViewById(R.id.fabAddFriend);
         fabAddFriend.setOnClickListener(v -> contactsH.addFriend());
 
-        adapter = new ContactsAdapter(database.getFriendsList(), getContext(), new ContactsAdapter.onRecyclerClick() {
+        adapter = new ContactsAdapter(database.getFriendsList(), new ContactsAdapter.onRecyclerClick() {
             @Override
             public void onClick(int position) {
                 Intent i = new Intent(getContext(), ChatActivity.class);

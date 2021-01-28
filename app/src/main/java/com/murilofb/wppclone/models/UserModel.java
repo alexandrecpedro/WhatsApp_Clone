@@ -7,6 +7,8 @@ import com.murilofb.wppclone.helpers.FirebaseH;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -75,4 +77,6 @@ public class UserModel extends Observable implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+
 }

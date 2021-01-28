@@ -1,79 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/linearChat"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:gravity="end"
+    android:orientation="horizontal">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/chatBubble"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:background="@drawable/rounded_button_light_green"
-        android:orientation="horizontal">
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingTop="2dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="2dp">
 
         <TextView
             android:id="@+id/txtMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:maxWidth="250dp"
-            android:paddingLeft="8dp"
-            android:paddingTop="2dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="2dp"
+            android:layout_weight="2"
+            android:text="text sample"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/txtHourSent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:visibility="gone" />
 
         <ImageView
-            android:id="@+id/imgVPhotoSent"
+            android:id="@+id/imgVPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:src="@drawable/default_user_but_round"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/txtHourSent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="2"
+            android:scaleType="fitStart"
+            android:src="@drawable/img_sent_placeholder"
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/txtDateSent"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:text=""
-            android:textColor="@android:color/darker_gray"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toTopOf="@id/txtHourSent"
-            app:layout_constraintRight_toRightOf="parent" />
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txtHourSent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:paddingBottom="2dp"
-            android:text=""
-            android:textColor="@android:color/darker_gray"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/txtDateSent"
-            app:layout_constraintRight_toRightOf="parent" />
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="00/00"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="10sp" />
 
+            <TextView
+                android:id="@+id/txtHour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="00:00"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
+

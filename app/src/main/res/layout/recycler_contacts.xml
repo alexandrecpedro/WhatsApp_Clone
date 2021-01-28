@@ -18,6 +18,7 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/contactProfilePhoto"
         android:text="Name"
+        android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold" />
 

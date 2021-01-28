@@ -56,4 +56,5 @@
 
     <!-- ChatAct -->
     <string name="hint_new_message">Digite uma mensagem</string>
+    <string name="toast_empty_message">Digite uma mensagem primeiro</string>
 </resources>
