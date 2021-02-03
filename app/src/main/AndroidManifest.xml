@@ -42,8 +42,11 @@
             android:name=".chat.ChatActivity"
             android:parentActivityName=".home.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ChatBackground"
-            />
+            android:theme="@style/ChatBackground" />
+        <activity
+            android:name=".create_group.CreateGroupAct"
+            android:parentActivityName=".home.HomeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings_act_label"

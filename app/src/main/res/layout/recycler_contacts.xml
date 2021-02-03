@@ -1,33 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:padding="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/contactProfilePhoto"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/default_user_but_round" />
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+
+        android:src="@drawable/default_user_but_round"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/contactName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/contactProfilePhoto"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/contactProfilePhoto"
         android:text="Name"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/contactUserName"
+        app:layout_constraintLeft_toRightOf="@id/contactProfilePhoto"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/contactUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/contactName"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/contactProfilePhoto"
-        android:text="UserName"
-        android:textSize="14sp" />
-</RelativeLayout>
+        android:drawableLeft="@drawable/ic_gallery"
+        android:drawableTint="@android:color/holo_blue_light"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/contactProfilePhoto"
+        app:layout_constraintTop_toBottomOf="@id/contactName" />
+</androidx.constraintlayout.widget.ConstraintLayout>

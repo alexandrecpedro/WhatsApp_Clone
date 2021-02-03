@@ -23,6 +23,7 @@
     <!-- ContactsFrag -->
     <string name="title_contacts_frag">Contacts</string>
     <string name="dialog_title_new_contact">New contact</string>
+    <string name="item_new_group">New Group</string>
     <string name="dialog_message_new_contact">When you send a message this e-mail will be saved in your contacts</string>
     <string name="dialog_new_contact_positive">Add</string>
     <string name="dialog_new_contact_negative">Cancel</string>

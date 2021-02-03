@@ -1,5 +1,7 @@
 package com.murilofb.wppclone.home.tabs;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,13 +22,16 @@ import com.murilofb.wppclone.chat.ChatActivity;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.models.UserModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class MessagesTab extends Fragment implements Observer {
-    private RecyclerView recyclerMessages;
-    private ContactsAdapter adapter;
-    private MessagesH messagesH;
+    private static RecyclerView recyclerMessages;
+    private static ContactsAdapter adapter;
+    private static MessagesH messagesH;
+    private static Activity activity;
 
     public MessagesTab() {
     }
@@ -38,6 +43,7 @@ public class MessagesTab extends Fragment implements Observer {
         recyclerMessages = view.findViewById(R.id.recyclerMessages);
         messagesH = new MessagesH(this);
         messagesH.loadLastChats();
+        activity = getActivity();
         configRecycler();
         return view;
     }
@@ -50,18 +56,53 @@ public class MessagesTab extends Fragment implements Observer {
         }
     }
 
+
     private void configRecycler() {
         recyclerMessages.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new ContactsAdapter(messagesH.getFriendsChat(), new ContactsAdapter.onRecyclerClick() {
+        final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
             @Override
             public void onClick(int position) {
                 UserModel friend = messagesH.getFriendsChat().get(position);
-                Intent i = new Intent(getContext(), ChatActivity.class);
+                Intent i = new Intent(activity, ChatActivity.class);
                 i.putExtra("friend", friend);
                 startActivity(i);
             }
-        });
+        };
+
+        adapter = new ContactsAdapter(messagesH.getFriendsChat(), recyclerClick, true);
         recyclerMessages.setAdapter(adapter);
     }
+
+
+    public void queryMessages(String string) {
+        List<UserModel> queriedMessages = messagesH.queryMessages(string);
+
+        final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
+            @Override
+            public void onClick(int position) {
+                UserModel friend = queriedMessages.get(position);
+                Intent i = new Intent(getActivity(), ChatActivity.class);
+                i.putExtra("friend", friend);
+                startActivity(i);
+            }
+        };
+        adapter = new ContactsAdapter(queriedMessages, recyclerClick, true);
+        adapter.notifyDataSetChanged();
+        recyclerMessages.setAdapter(adapter);
+    }
+
+    public void showDefaultMessages(){
+        final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
+            @Override
+            public void onClick(int position) {
+                UserModel friend = messagesH.getFriendsChat().get(position);
+                Intent i = new Intent(activity, ChatActivity.class);
+                i.putExtra("friend", friend);
+                startActivity(i);
+            }
+        };
+        adapter = new ContactsAdapter(messagesH.getFriendsChat(), recyclerClick, true);
+        recyclerMessages.setAdapter(adapter);
+    };
 }
 

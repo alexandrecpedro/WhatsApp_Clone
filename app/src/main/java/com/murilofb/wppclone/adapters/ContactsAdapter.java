@@ -1,6 +1,5 @@
 package com.murilofb.wppclone.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.murilofb.wppclone.R;
-import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
 
@@ -20,15 +18,25 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
     private List<UserModel> friendsList;
     private onRecyclerClick recyclerClick;
+    private boolean isMessageFrag = false;
+
+    public ContactsAdapter(List<UserModel> friendsList, onRecyclerClick recyclerClick, boolean isMessageFrag) {
+        this.friendsList = friendsList;
+        this.recyclerClick = recyclerClick;
+        this.isMessageFrag = isMessageFrag;
+    }
+
+    private boolean verticalVersion = false;
 
     public ContactsAdapter(List<UserModel> friendsList, onRecyclerClick recyclerClick) {
         this.friendsList = friendsList;
         this.recyclerClick = recyclerClick;
+        verticalVersion = true;
     }
-
 
     @NonNull
     @Override
@@ -40,16 +48,28 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public void onBindViewHolder(@NonNull ContactsViewHolder holder, int position) {
         UserModel friend = friendsList.get(position);
+        boolean groupItem = friend.getEmail().equals("");
         holder.txtName.setText(friend.getName());
-        if (friend.getUserName().equals("")) {
-            holder.txtUserName.setText("");
-        } else {
-            holder.txtUserName.setText("@" + friend.getUserName());
+        if (!groupItem && !friend.getUserName().equals("")) {
+            holder.txtUserName.setCompoundDrawables(null, null, null, null);
+            holder.txtUserName.setText(friend.getUserName());
         }
-        Glide.with(holder.itemView)
-                .load(friend.getProfileImgLink())
-                .placeholder(R.drawable.default_user_but_round)
-                .into(holder.profilePhoto);
+        if (groupItem) {
+            holder.txtUserName.setVisibility(View.GONE);
+            Glide.with(holder.itemView)
+                    .load(R.drawable.new_group_green)
+                    .into(holder.profilePhoto);
+        } else {
+            Glide.with(holder.itemView)
+                    .load(friend.getProfileImgLink())
+                    .placeholder(R.drawable.default_user_but_round)
+                    .into(holder.profilePhoto);
+        }
+        if (isMessageFrag) {
+            int lightBlue = ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_blue_light);
+            holder.txtUserName.setTextColor(lightBlue);
+        }
+
     }
 
     @Override
@@ -83,6 +103,5 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
     public interface onRecyclerClick {
         void onClick(int position);
-
     }
 }

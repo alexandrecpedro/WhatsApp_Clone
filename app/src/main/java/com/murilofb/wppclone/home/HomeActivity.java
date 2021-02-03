@@ -4,6 +4,7 @@ package com.murilofb.wppclone.home;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.authentication.AuthTransitions;
 import com.murilofb.wppclone.helpers.FirebaseH;
@@ -34,11 +36,17 @@ import java.util.Observer;
 public class HomeActivity extends AppCompatActivity implements Observer {
     private AuthTransitions transitions;
     private FirebaseH.Auth auth;
-
+    private MaterialSearchView searchView;
+    private FragmentPagerItemAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbarHome);
         setSupportActionBar(toolbar);
@@ -49,11 +57,48 @@ public class HomeActivity extends AppCompatActivity implements Observer {
         auth.listenUserAuthStatus();
         UserModel.loadCurrentUser();
         configureSmartTab();
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i("Messages", "TextSubmit");
+                MessagesTab messagesTab = (MessagesTab) adapter.getPage(0);
+                if (query != null) {
+                    messagesTab.queryMessages(query);
+
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i("Messages", "TextChange");
+                MessagesTab messagesTab = (MessagesTab) adapter.getPage(0);
+                if (newText != null && !newText.equals("")) {
+                    messagesTab.queryMessages(newText);
+                }
+                return false;
+            }
+        });
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                MessagesTab messagesTab = (MessagesTab) adapter.getPage(0);
+                messagesTab.showDefaultMessages();
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
+        MenuItem seachMenu = menu.findItem(R.id.menuSearch);
+        searchView.setMenuItem(seachMenu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -64,7 +109,7 @@ public class HomeActivity extends AppCompatActivity implements Observer {
                 break;
             case R.id.menuSettings:
                 Intent i = new Intent(HomeActivity.this, SettingsActivity.class);
-             //   i.putExtra("signup", true);
+                //i.putExtra("signup", true);
                 startActivity(i);
                 break;
             case R.id.menuSignOut:
@@ -81,8 +126,17 @@ public class HomeActivity extends AppCompatActivity implements Observer {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void configureSmartTab() {
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+        adapter = new FragmentPagerItemAdapter(
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
                 .add(getString(R.string.title_messages_frag), MessagesTab.class)
                 .add(getString(R.string.title_contacts_frag), ContactsTab.class)
@@ -90,7 +144,6 @@ public class HomeActivity extends AppCompatActivity implements Observer {
         );
         ViewPager viewPager = findViewById(R.id.viewPagerHome);
         viewPager.setAdapter(adapter);
-
 
         SmartTabLayout tabLayout = findViewById(R.id.tabLayoutHome);
         tabLayout.setViewPager(viewPager);

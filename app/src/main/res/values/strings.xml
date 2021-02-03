@@ -24,6 +24,7 @@
     <string name="title_contacts_frag">Contatos</string>
     <string name="dialog_title_new_contact">Novo contato</string>
     <string name="dialog_message_new_contact">Ao mandar uma mensagem este email será salvo em seus contatos</string>
+    <string name="item_new_group">Criar novo grupo</string>
     <string name="dialog_new_contact_positive">Adicionar</string>
     <string name="dialog_new_contact_negative">Cancelar</string>
     <string name="toast_new_contact_empty">Você deve preencher o campo primeiro</string>

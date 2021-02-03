@@ -20,10 +20,6 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
     private List<MessageModel> messagesList;
-    private int MSG_SENT = 0;
-    private int MSG_RECIEVED = 1;
-
-
     public ChatAdapter(List<MessageModel> messagesList) {
         this.messagesList = messagesList;
     }

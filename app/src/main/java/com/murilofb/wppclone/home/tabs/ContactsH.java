@@ -21,7 +21,6 @@ public class ContactsH {
     }
 
     public void addFriend() {
-
         showDialog();
     }
 

@@ -165,7 +165,7 @@ public class FirebaseH extends Observable {
         private ToastH toastH;
 
         public RealtimeDatabase(Activity activity) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
             currentUserRef.keepSynced(true);
             if (activity != null) {
                 toastH = new ToastH(activity);
@@ -190,18 +190,23 @@ public class FirebaseH extends Observable {
             });
         }
 
+        private Query friendsQuery = userFriendsReference;
+
         public void loadFriendsList() {
-            userFriendsReference.addValueEventListener(new ValueEventListener() {
+            friendsQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     friendsList.clear();
-                    Log.i("friendSearch", snapshot.getKey());
+                    UserModel group = new UserModel();
+                    group.setName(activity.getString(R.string.item_new_group));
+                    group.setEmail("");
+                    friendsList.add(group);
                     for (DataSnapshot item : snapshot.getChildren()) {
-                        Log.i("friendSearch", item.getKey());
+
                         usersRef.child(item.getKey()).child("userData").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                Log.i("friendSearch", snapshot.getKey());
+
                                 friendsList.add(snapshot.getValue(UserModel.class));
                                 updateChanges(ARG_ATT_CONTACTS);
                             }
@@ -398,7 +403,7 @@ public class FirebaseH extends Observable {
                         userProfileRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
-                                new RealtimeDatabase(null).putProfileImage(userProfileRef.getPath(), task.getResult().toString());
+                                new RealtimeDatabase().putProfileImage(userProfileRef.getPath(), task.getResult().toString());
                                 bitmap.recycle();
                             }
                         });
