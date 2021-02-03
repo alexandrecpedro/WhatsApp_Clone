@@ -57,11 +57,14 @@
         <ImageView
             android:id="@+id/imgVPhoto"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="2"
-            android:scaleType="fitStart"
+            android:adjustViewBounds="true"
+            android:maxHeight="300dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/img_sent_placeholder"
             android:visibility="gone" />
 

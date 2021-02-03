@@ -46,6 +46,10 @@ public class UserModel extends Observable implements Serializable {
         return email;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public String getUserName() {
         return userName;
     }

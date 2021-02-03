@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +22,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
     private List<UserModel> friendsList;
-    private List<MessageModel> messagesList;
     private onRecyclerClick recyclerClick;
 
     public ContactsAdapter(List<UserModel> friendsList, onRecyclerClick recyclerClick) {
@@ -41,7 +41,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     public void onBindViewHolder(@NonNull ContactsViewHolder holder, int position) {
         UserModel friend = friendsList.get(position);
         holder.txtName.setText(friend.getName());
-        holder.txtUserName.setText("@" + friend.getUserName());
+        if (friend.getUserName().equals("")) {
+            holder.txtUserName.setText("");
+        } else {
+            holder.txtUserName.setText("@" + friend.getUserName());
+        }
         Glide.with(holder.itemView)
                 .load(friend.getProfileImgLink())
                 .placeholder(R.drawable.default_user_but_round)

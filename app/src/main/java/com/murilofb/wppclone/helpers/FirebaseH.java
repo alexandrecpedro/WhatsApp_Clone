@@ -29,7 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.chat.ChatActivity;
-import com.murilofb.wppclone.chat.ChatH;
+import com.murilofb.wppclone.home.tabs.MessagesH;
 import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
@@ -149,22 +149,24 @@ public class FirebaseH extends Observable {
     public class RealtimeDatabase {
         public static final String ARG_ATT_CONTACTS = "attCont";
         public static final String ARG_ATT_MESSAGES = "attMsg";
+        public static final String ARG_ATT_LAST_MESSAGES = "attLast";
         private List<UserModel> friendsList = new ArrayList<>();
         private List<MessageModel> messagesList = new ArrayList<>();
 
-        private final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-        private final DatabaseReference usersReference = rootReference.child("users");
-        private final DatabaseReference currentUserReference = usersReference
-                .child(new Auth(null).getUserUid());
-        private final DatabaseReference userDataReference = currentUserReference.child("userData");
-        private final DatabaseReference userMessagesReference = currentUserReference.child("messages");
-        private final DatabaseReference uploadedImages = currentUserReference.child("uploadedImages");
-        private final DatabaseReference userFriendsReference = currentUserReference.child("friends");
+        private final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        private final DatabaseReference usersRef = rootRef.child("users");
+        private final DatabaseReference currentUserRef = usersRef.child(new Auth(null).getUserUid());
+        private final DatabaseReference userDataRef = currentUserRef.child("userData");
+        private final DatabaseReference userMessagesRef = currentUserRef.child("messages");
+        private final DatabaseReference userLastMessagesRef = currentUserRef.child("lastMessages");
+        private final DatabaseReference uploadedImages = currentUserRef.child("uploadedImages");
+        private final DatabaseReference userFriendsReference = currentUserRef.child("friends");
         private Activity activity;
         private ToastH toastH;
 
         public RealtimeDatabase(Activity activity) {
-            currentUserReference.keepSynced(true);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            currentUserRef.keepSynced(true);
             if (activity != null) {
                 toastH = new ToastH(activity);
             }
@@ -172,11 +174,11 @@ public class FirebaseH extends Observable {
         }
 
         public RealtimeDatabase() {
-            currentUserReference.keepSynced(true);
+            currentUserRef.keepSynced(true);
         }
 
         public void loadUserInfo() {
-            userDataReference.addValueEventListener(new ValueEventListener() {
+            userDataRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     UserModel.setCurrentUser(snapshot.getValue(UserModel.class));
@@ -196,7 +198,7 @@ public class FirebaseH extends Observable {
                     Log.i("friendSearch", snapshot.getKey());
                     for (DataSnapshot item : snapshot.getChildren()) {
                         Log.i("friendSearch", item.getKey());
-                        usersReference.child(item.getKey()).child("userData").addListenerForSingleValueEvent(new ValueEventListener() {
+                        usersRef.child(item.getKey()).child("userData").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Log.i("friendSearch", snapshot.getKey());
@@ -221,8 +223,50 @@ public class FirebaseH extends Observable {
             });
         }
 
+        public void loadFriendsLastMsg(final List<UserModel> listFriends) {
+            userLastMessagesRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    listFriends.clear();
+                    for (DataSnapshot item : snapshot.getChildren()) {
+                        String friendID = item.getKey();
+                        String lastMsg = "";
+                        MessageModel messageModel = item.getValue(MessageModel.class);
+                        if (messageModel.getMessage() != null) {
+                            lastMsg = messageModel.getMessage();
+                        }
+                        String finalLastMsg = lastMsg;
+                        usersRef.child(friendID).child("userData").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                UserModel userModel = snapshot.getValue(UserModel.class);
+                                userModel.setUserName(finalLastMsg);
+                                listFriends.add(userModel);
+                                updateChanges(ARG_ATT_LAST_MESSAGES);
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
         public void findUserByEmail(String email, AlertDialog alertDialog) {
-            Query emailQuery = usersReference.orderByChild("userData/email").equalTo(email);
+            Query emailQuery = usersRef.orderByChild("userData/email").equalTo(email);
             emailQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -262,25 +306,29 @@ public class FirebaseH extends Observable {
         }
 
         public void addFriend(String key, String email) {
-            currentUserReference.child("friends").child(key).setValue(email);
+            currentUserRef.child("friends").child(key).setValue(email);
 
         }
 
         public void sendMessage(MessageModel message, String to) {
             //Adicionando a minha Db como mensagem mandada
-            userMessagesReference.child(to).push().setValue(message);
-
+            userMessagesRef.child(to).push().setValue(message);
+            userLastMessagesRef.child(to).setValue(message);
             message.setSent(false);
             //Adicionando a db do outro usuário como mensagem recebida
-            usersReference.child(to)
+            usersRef.child(to)
                     .child("messages")
                     .child(new Auth(null).getUserUid())
                     .push()
                     .setValue(message);
+            usersRef.child(to)
+                    .child("lastMessages")
+                    .child(new Auth(null).getUserUid())
+                    .setValue(message);
         }
 
         public void loadMessages(String from) {
-            Query messagesQuery = userMessagesReference.child(from).orderByChild("messageTime");
+            Query messagesQuery = userMessagesRef.child(from).orderByChild("messageTime");
             messagesQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -304,11 +352,11 @@ public class FirebaseH extends Observable {
         }
 
         public void changeUserName(String newUserName) {
-            userDataReference.child("userName").setValue(newUserName);
+            userDataRef.child("userName").setValue(newUserName);
         }
 
         protected void putUserData(UserModel model) {
-            userDataReference.setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+            userDataRef.setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
@@ -319,7 +367,7 @@ public class FirebaseH extends Observable {
         }
 
         protected void putProfileImage(String path, String downloadLink) {
-            userDataReference.child("profileImgLink").setValue(downloadLink);
+            userDataRef.child("profileImgLink").setValue(downloadLink);
             uploadedImages.child("profileImg").setValue(path);
         }
     }

@@ -1,5 +1,7 @@
 package com.murilofb.wppclone.models;
 
+import androidx.annotation.Nullable;
+
 import java.sql.Timestamp;
 
 public class MessageModel {
