@@ -150,7 +150,6 @@ public class FirebaseH extends Observable {
         public static final String ARG_ATT_CONTACTS = "attCont";
         public static final String ARG_ATT_MESSAGES = "attMsg";
         public static final String ARG_ATT_LAST_MESSAGES = "attLast";
-        private List<UserModel> friendsList = new ArrayList<>();
         private List<MessageModel> messagesList = new ArrayList<>();
 
         private final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
@@ -190,10 +189,9 @@ public class FirebaseH extends Observable {
             });
         }
 
-        private Query friendsQuery = userFriendsReference;
 
-        public void loadFriendsList() {
-            friendsQuery.addValueEventListener(new ValueEventListener() {
+        public void loadFriendsList(List<UserModel> friendsList) {
+            userFriendsReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     friendsList.clear();
@@ -202,11 +200,9 @@ public class FirebaseH extends Observable {
                     group.setEmail("");
                     friendsList.add(group);
                     for (DataSnapshot item : snapshot.getChildren()) {
-
                         usersRef.child(item.getKey()).child("userData").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                                 friendsList.add(snapshot.getValue(UserModel.class));
                                 updateChanges(ARG_ATT_CONTACTS);
                             }
@@ -229,7 +225,8 @@ public class FirebaseH extends Observable {
         }
 
         public void loadFriendsLastMsg(final List<UserModel> listFriends) {
-            userLastMessagesRef.addValueEventListener(new ValueEventListener() {
+            Query messagesInOrder = userLastMessagesRef.orderByChild("messageTime");
+            messagesInOrder.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     listFriends.clear();
@@ -248,8 +245,6 @@ public class FirebaseH extends Observable {
                                 userModel.setUserName(finalLastMsg);
                                 listFriends.add(userModel);
                                 updateChanges(ARG_ATT_LAST_MESSAGES);
-
-
                             }
 
                             @Override
@@ -306,9 +301,6 @@ public class FirebaseH extends Observable {
             });
         }
 
-        public List<UserModel> getFriendsList() {
-            return friendsList;
-        }
 
         public void addFriend(String key, String email) {
             currentUserRef.child("friends").child(key).setValue(email);

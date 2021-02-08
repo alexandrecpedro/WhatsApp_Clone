@@ -20,6 +20,8 @@ import com.murilofb.wppclone.chat.ChatActivity;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.models.UserModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,6 +30,7 @@ public class ContactsTab extends Fragment implements Observer {
     private static ContactsAdapter adapter;
     private ContactsH contactsH;
     private FloatingActionButton fabAddFriend;
+    private List<UserModel> friendList = new ArrayList<>();
 
     public ContactsTab() {
     }
@@ -39,14 +42,14 @@ public class ContactsTab extends Fragment implements Observer {
         FirebaseH firebaseH = new FirebaseH();
         firebaseH.addObserver(this);
         FirebaseH.RealtimeDatabase database = firebaseH.new RealtimeDatabase(getActivity());
-        database.loadFriendsList();
+        database.loadFriendsList(friendList);
         contactsH = new ContactsH(getActivity());
         fabAddFriend = view.findViewById(R.id.fabAddFriend);
         fabAddFriend.setOnClickListener(v -> contactsH.addFriend());
         ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
             @Override
             public void onClick(int position) {
-                UserModel friend = database.getFriendsList().get(position);
+                UserModel friend = friendList.get(position);
                 if (friend.getEmail().equals("")) {
                     startActivity(new Intent(getActivity(), CreateGroupAct.class));
                 } else {
@@ -57,7 +60,7 @@ public class ContactsTab extends Fragment implements Observer {
 
             }
         };
-        adapter = new ContactsAdapter(database.getFriendsList(), recyclerClick, false);
+        adapter = new ContactsAdapter(friendList, recyclerClick, false);
         recyclerContacts = view.findViewById(R.id.recyclerContacts);
         recyclerContacts.setAdapter(adapter);
         recyclerContacts.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));

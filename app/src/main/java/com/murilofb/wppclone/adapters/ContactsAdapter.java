@@ -32,6 +32,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
     private boolean verticalVersion = false;
 
+    //Esse construtor será somente chamado na activity de gerar grupo
     public ContactsAdapter(List<UserModel> friendsList, onRecyclerClick recyclerClick) {
         this.friendsList = friendsList;
         this.recyclerClick = recyclerClick;
@@ -41,7 +42,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @NonNull
     @Override
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_contacts, parent, false);
+        View view;
+        if (verticalVersion) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_contacts_vertical, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_contacts, parent, false);
+        }
+
         return new ContactsViewHolder(view, recyclerClick);
     }
 
@@ -49,8 +56,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     public void onBindViewHolder(@NonNull ContactsViewHolder holder, int position) {
         UserModel friend = friendsList.get(position);
         boolean groupItem = friend.getEmail().equals("");
-        holder.txtName.setText(friend.getName());
-        if (!groupItem && !friend.getUserName().equals("")) {
+        if (verticalVersion) {
+            String[] splittedName = friend.getName().split(" ");
+            holder.txtName.setText(splittedName[0]);
+        } else {
+            holder.txtName.setText(friend.getName());
+        }
+
+        if (!groupItem && !friend.getUserName().equals("") && !verticalVersion) {
             holder.txtUserName.setCompoundDrawables(null, null, null, null);
             holder.txtUserName.setText(friend.getUserName());
         }
