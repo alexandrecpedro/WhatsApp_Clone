@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.chat.ChatActivity;
 import com.murilofb.wppclone.home.tabs.MessagesH;
+import com.murilofb.wppclone.models.GroupModel;
 import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
@@ -160,6 +162,7 @@ public class FirebaseH extends Observable {
         private final DatabaseReference userLastMessagesRef = currentUserRef.child("lastMessages");
         private final DatabaseReference uploadedImages = currentUserRef.child("uploadedImages");
         private final DatabaseReference userFriendsReference = currentUserRef.child("friends");
+        private final DatabaseReference groupsReference = rootRef.child("groups");
         private Activity activity;
         private ToastH toastH;
 
@@ -301,10 +304,8 @@ public class FirebaseH extends Observable {
             });
         }
 
-
         public void addFriend(String key, String email) {
             currentUserRef.child("friends").child(key).setValue(email);
-
         }
 
         public void sendMessage(MessageModel message, String to) {
@@ -322,6 +323,23 @@ public class FirebaseH extends Observable {
                     .child("lastMessages")
                     .child(new Auth(null).getUserUid())
                     .setValue(message);
+        }
+
+        public void createGroup(GroupModel group, Bitmap groupIcon) {
+
+            groupsReference.child(group.getGroupId()).setValue(group);
+            if (groupIcon != null) {
+                new StorageH().uploadGroupImage(groupIcon, group.getGroupId());
+            }
+
+        }
+
+        public void sendGroupMessage(List<UserModel> participants, MessageModel message, String groupkey) {
+            for (UserModel user : participants) {
+                String userId = user.getUserId();
+                usersRef.child(userId).child("messages").child(groupkey).push().setValue(message);
+                usersRef.child(userId).child("lastMessages").child(groupkey).setValue(message);
+            }
         }
 
         public void loadMessages(String from) {
@@ -375,6 +393,10 @@ public class FirebaseH extends Observable {
                 .child("profilePic")
                 .child(new Auth(null).getUserUid() + ".jpeg");
 
+        private final StorageReference groupsRef = rootRef.child("images")
+                .child("groups");
+
+
         private final StorageReference sentImageRef = rootRef.child("images")
                 .child("sent")
                 .child(new Auth(null).getUserUid())
@@ -396,6 +418,32 @@ public class FirebaseH extends Observable {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 new RealtimeDatabase().putProfileImage(userProfileRef.getPath(), task.getResult().toString());
+                                bitmap.recycle();
+                            }
+                        });
+
+                    }
+                }
+            });
+
+
+        }
+
+        public void uploadGroupImage(Bitmap bitmap, String groupKey) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 70, baos);
+            StorageReference groupIconReference = groupsRef.child(groupKey + ".png");
+
+            groupIconReference.putBytes(baos.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        groupIconReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                new RealtimeDatabase().groupsReference.child(groupKey)
+                                        .child("iconUrl")
+                                        .setValue(task.getResult().toString());
                                 bitmap.recycle();
                             }
                         });

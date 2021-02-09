@@ -53,7 +53,7 @@ public class ChatActivity extends AppCompatActivity implements Observer {
     private ChatAdapter adapter;
     private FirebaseH.RealtimeDatabase database;
     private ToastH toastH;
-    private boolean isFriendAlready;
+    //    private boolean isFriendAlready;
     private boolean messageSent;
     private ChatH chatH;
 
@@ -72,7 +72,7 @@ public class ChatActivity extends AppCompatActivity implements Observer {
         chatH = new ChatH(this);
 
         friend = (UserModel) getIntent().getSerializableExtra("friend");
-        isFriendAlready = getIntent().getBooleanExtra("isFriendAlready", true);
+        // isFriendAlready = getIntent().getBooleanExtra("isFriendAlready", true);
 
         setOnCLick();
         configureRecycler();
@@ -92,14 +92,14 @@ public class ChatActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onStop() {
         super.onStop();
-        if (!isFriendAlready) {
-            if (messageSent) {
-                if (friend != null) {
-                    String friendKey = getIntent().getStringExtra("friendKey");
-                    new FirebaseH().new RealtimeDatabase().addFriend(friendKey, friend.getEmail());
-                }
+        //if (!isFriendAlready) {
+        if (messageSent) {
+            if (friend != null) {
+
+                new FirebaseH().new RealtimeDatabase().addFriend(friend.getUserId(), friend.getEmail());
             }
         }
+        //}
     }
 
     boolean loaded = false;
@@ -114,7 +114,10 @@ public class ChatActivity extends AppCompatActivity implements Observer {
             } else {
                 adapter.notifyItemInserted(database.getMessagesList().size() - 1);
             }
-            recyclerMessages.scrollToPosition(adapter.getItemCount() - 1);
+            if (adapter.getItemCount() > 0) {
+                recyclerMessages.scrollToPosition(adapter.getItemCount() - 1);
+            }
+
         }
     }
 

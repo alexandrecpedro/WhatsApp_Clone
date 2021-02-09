@@ -54,5 +54,7 @@ dependencies {
     //ImageCropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     //Material SerchView
-    compile 'com.miguelcatalan:materialsearchview:1.4.0'
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+    //CardView
+    implementation "androidx.cardview:cardview:1.0.0"
 }

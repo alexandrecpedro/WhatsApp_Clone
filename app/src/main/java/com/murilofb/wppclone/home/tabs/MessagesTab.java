@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,13 +60,16 @@ public class MessagesTab extends Fragment implements Observer {
 
     private void configRecycler() {
         recyclerMessages.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
         final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
             @Override
             public void onClick(int position) {
-                UserModel friend = messagesH.getFriendsChat().get(position);
-                Intent i = new Intent(activity, ChatActivity.class);
-                i.putExtra("friend", friend);
-                startActivity(i);
+                if (messagesH.getFriendsChat() != null || messagesH.getFriendsChat().size() > 0) {
+                    UserModel friend = messagesH.getFriendsChat().get(position);
+                    Intent i = new Intent(activity, ChatActivity.class);
+                    i.putExtra("friend", friend);
+                    startActivity(i);
+                }
             }
         };
 
@@ -91,7 +95,7 @@ public class MessagesTab extends Fragment implements Observer {
         recyclerMessages.setAdapter(adapter);
     }
 
-    public void showDefaultMessages(){
+    public void showDefaultMessages() {
         final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
             @Override
             public void onClick(int position) {
@@ -103,6 +107,8 @@ public class MessagesTab extends Fragment implements Observer {
         };
         adapter = new ContactsAdapter(messagesH.getFriendsChat(), recyclerClick, true);
         recyclerMessages.setAdapter(adapter);
-    };
+    }
+
+    ;
 }
 

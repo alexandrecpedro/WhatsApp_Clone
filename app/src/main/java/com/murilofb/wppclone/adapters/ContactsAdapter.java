@@ -1,11 +1,14 @@
 package com.murilofb.wppclone.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,12 +33,25 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         this.isMessageFrag = isMessageFrag;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     private boolean verticalVersion = false;
 
     //Esse construtor será somente chamado na activity de gerar grupo
-    public ContactsAdapter(List<UserModel> friendsList, onRecyclerClick recyclerClick) {
+    public ContactsAdapter(List<UserModel> friendsList, @Nullable onRecyclerClick recyclerClick) {
         this.friendsList = friendsList;
-        this.recyclerClick = recyclerClick;
+        if (recyclerClick != null) {
+            this.recyclerClick = recyclerClick;
+        }
         verticalVersion = true;
     }
 
@@ -48,7 +64,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_contacts, parent, false);
         }
-
+        if (recyclerClick == null) {
+            return new ContactsViewHolder(view, null);
+        }
         return new ContactsViewHolder(view, recyclerClick);
     }
 
@@ -59,15 +77,20 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         if (verticalVersion) {
             String[] splittedName = friend.getName().split(" ");
             holder.txtName.setText(splittedName[0]);
+            if (recyclerClick == null) {
+                holder.imgBtnRemoveMember.setVisibility(View.GONE);
+            }
         } else {
             holder.txtName.setText(friend.getName());
         }
+
 
         if (!groupItem && !friend.getUserName().equals("") && !verticalVersion) {
             holder.txtUserName.setCompoundDrawables(null, null, null, null);
             holder.txtUserName.setText(friend.getUserName());
         }
         if (groupItem) {
+            Log.i("GroupActivity", "Position " + position + " groupItem");
             holder.txtUserName.setVisibility(View.GONE);
             Glide.with(holder.itemView)
                     .load(R.drawable.new_group_green)
@@ -98,19 +121,27 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         TextView txtName;
         TextView txtUserName;
         onRecyclerClick recyclerClick;
+        ImageButton imgBtnRemoveMember;
 
-        public ContactsViewHolder(@NonNull View itemView, onRecyclerClick recyclerClick) {
+        public ContactsViewHolder(@NonNull View itemView, @Nullable onRecyclerClick recyclerClick) {
             super(itemView);
             profilePhoto = itemView.findViewById(R.id.contactProfilePhoto);
             txtName = itemView.findViewById(R.id.contactName);
             txtUserName = itemView.findViewById(R.id.contactUserName);
-            this.recyclerClick = recyclerClick;
-            itemView.setOnClickListener(this);
+            imgBtnRemoveMember = itemView.findViewById(R.id.imgBtnRemoveMember);
+
+            if (recyclerClick != null) {
+                this.recyclerClick = recyclerClick;
+                itemView.setOnClickListener(this);
+            }
+
         }
 
         @Override
         public void onClick(View v) {
-            recyclerClick.onClick(getAdapterPosition());
+            if (recyclerClick != null) {
+                recyclerClick.onClick(getAdapterPosition());
+            }
         }
     }
 

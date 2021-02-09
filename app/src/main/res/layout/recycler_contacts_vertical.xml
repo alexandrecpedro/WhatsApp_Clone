@@ -1,23 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/contactProfilePhoto"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/default_user_but_round" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/contactProfilePhoto"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/default_user_but_round"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:background="@drawable/rounded_button_green"
+            android:padding="1dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_close"
+            android:textColor="@android:color/white"
+            android:id="@+id/imgBtnRemoveMember"
+            app:layout_constraintBottom_toBottomOf="@id/contactProfilePhoto"
+            app:layout_constraintRight_toRightOf="@id/contactProfilePhoto" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/contactName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="egfwegfew"
+        android:text="first_name"
         android:textColor="@android:color/black"
         android:textSize="14sp"
         android:textStyle="bold" />

@@ -2,6 +2,7 @@ package com.murilofb.wppclone.home.tabs;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.murilofb.wppclone.create_group.CreateGroupAct;
+import com.murilofb.wppclone.create_group.AddContactsAct;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.adapters.ContactsAdapter;
 import com.murilofb.wppclone.chat.ChatActivity;
@@ -51,7 +52,7 @@ public class ContactsTab extends Fragment implements Observer {
             public void onClick(int position) {
                 UserModel friend = friendList.get(position);
                 if (friend.getEmail().equals("")) {
-                    startActivity(new Intent(getActivity(), CreateGroupAct.class));
+                    startActivity(new Intent(getActivity(), AddContactsAct.class));
                 } else {
                     Intent i = new Intent(getContext(), ChatActivity.class);
                     i.putExtra("friend", friend);
@@ -61,17 +62,37 @@ public class ContactsTab extends Fragment implements Observer {
             }
         };
         adapter = new ContactsAdapter(friendList, recyclerClick, false);
+        //adapter.setHasStableIds(true);
         recyclerContacts = view.findViewById(R.id.recyclerContacts);
         recyclerContacts.setAdapter(adapter);
         recyclerContacts.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-        recyclerContacts.setHasFixedSize(false);
+
+
         return view;
     }
 
     @Override
     public void update(Observable o, Object arg) {
         if (arg.equals(FirebaseH.RealtimeDatabase.ARG_ATT_CONTACTS)) {
+            /*
+            Log.i("Contacts", "FriendCount: " + friendList.size());
+            if (friendList.size() < 3) {
+                Log.i("Contacts", "MENOR QUE 3");
+                if (friendList.get(0).getEmail().equals("")) {
+                    Log.i("Contacts", "Removeu " + friendList.get(0).getName());
+                    friendList.remove(0);
+                    adapter.notifyItemRemoved(0);
+                }
+            } else {
+                if (!friendList.get(0).getEmail().equals("")){
+                    UserModel group = new UserModel();
+                    group.setName(getString(R.string.item_new_group));
+                    group.setEmail("");
+                    friendList.add(0,group);
+                }*/
             adapter.notifyDataSetChanged();
+
+
         }
     }
 

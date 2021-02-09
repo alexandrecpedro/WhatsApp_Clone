@@ -44,7 +44,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/ChatBackground" />
         <activity
-            android:name=".create_group.CreateGroupAct"
+            android:name=".create_group.AddContactsAct"
             android:parentActivityName=".home.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -52,6 +52,12 @@
             android:label="@string/settings_act_label"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.WppClone"></activity>
+        <activity
+            android:name=".create_group.ConfigGroupAct"
+            android:label="@string/activity_config_group_title"
+            android:parentActivityName=".create_group.AddContactsAct"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

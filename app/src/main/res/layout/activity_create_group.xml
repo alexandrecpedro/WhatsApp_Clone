@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -7,10 +8,29 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerNewGroupAdded"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:scrollbars="horizontal" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerNewGroupToAdd"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_below="@id/recyclerNewGroupAdded"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:scrollbars="vertical" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabContinue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_forward"
+        app:fab_colorNormal="@color/colorPrimary"
+        app:fab_colorPressed="@color/colorPrimary" />
+</RelativeLayout>

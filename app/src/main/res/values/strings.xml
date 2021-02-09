@@ -34,6 +34,17 @@
     <string name="menu_settings">Configurações</string>
     <string name="menu_search">Pesquisar</string>
 
+    <!-- CreateGroupActivity -->
+    <string name="toolbar_create_group_title">Novo Grupo</string>
+    <string name="toolbar_create_group_subtitle1">de</string>
+    <string name="toolbar_create_group_subtitle2">selecionados</string>
+    <!-- ConfigGroupActivity -->
+    <string name="activity_config_group_title">Configurar Grupo</string>
+    <string name="toolbar_config_group_subtitle">Adicionar nome</string>
+    <string name="edt_group_name_hint">Insira o nome do grupo aqui...</string>
+    <string name="txt_config_group_hint">Insira um nome e ícone(opcional) para o grupo</string>
+    <string name="txt_participants_count">Participantes:</string>
+    <string name="toast_empty_group_name">O campo de nome não deve estar vazio</string>
     <!-- SettingsActivity -->
     <string name="settings_act_label">Configurações</string>
     <string name="hint_user_name">Nome de usuário</string>
