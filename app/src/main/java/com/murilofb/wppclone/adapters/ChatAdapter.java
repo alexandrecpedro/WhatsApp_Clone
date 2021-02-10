@@ -14,12 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.models.MessageModel;
+import com.murilofb.wppclone.models.UserModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
     private List<MessageModel> messagesList;
+
     public ChatAdapter(List<MessageModel> messagesList) {
         this.messagesList = messagesList;
     }
@@ -39,31 +42,35 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        MessageModel message = messagesList.get(viewType);
         View view;
-        if (messagesList.get(viewType).isSent()) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_sent_layout, parent, false);
-            return new ChatViewHolder(view);
+        if (message.isGroup()) {
+            UserModel currentUser = UserModel.getCurrentUser();
+            if (currentUser.getUserId().equals(message.getSentBy())) {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_sent_layout, parent, false);
+            } else {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recylcer_recieved_layout, parent, false);
+            }
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recylcer_recieved_layout, parent, false);
-            return new ChatViewHolder(view);
+            if (message.isSent()) {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_sent_layout, parent, false);
+            } else {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recylcer_recieved_layout, parent, false);
+            }
         }
-
+        return new ChatViewHolder(view);
     }
 
-    long onBindViewCount = 0;
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        Log.i("ChatActivity", "BindView: " + onBindViewCount);
-        onBindViewCount++;
         MessageModel message = messagesList.get(position);
-        boolean nullMsg = (message.getMessage() == null);
+        boolean nullMsg = (message.getMessage() == null) || (message.getMessage().equals(""));
 
         if (!nullMsg) {
             holder.txtMessage.setText(message.getMessage());
             holder.txtMessage.setVisibility(View.VISIBLE);
         } else {
-            //Log.i("ChatActivity", "LoadedInPosition: " + position);
             holder.imgVPhoto.setVisibility(View.VISIBLE);
             Glide.with(holder.itemView.getContext())
                     .load(Uri.parse(message.getPhotoUrl()))
@@ -73,7 +80,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         holder.txtHourSent.setText(sdFormat.format(message.getMessageTime()));
         sdFormat = new SimpleDateFormat("dd/MM");
         holder.txtDateSent.setText(sdFormat.format(message.getMessageTime()));
-
 
     }
 

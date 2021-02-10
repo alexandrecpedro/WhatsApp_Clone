@@ -46,6 +46,7 @@
     <string name="txt_config_group_hint">Provide a group subject and optional group icon</string>
     <string name="txt_participants_count">Participants:</string>
     <string name="toast_empty_group_name">Your group must have a name</string>
+    <string name="new_group_message">Group created by</string>
 
     <!-- SettingsActivity -->
     <string name="settings_act_label">Settings</string>

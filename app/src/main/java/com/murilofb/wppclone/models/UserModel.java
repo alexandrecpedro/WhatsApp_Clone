@@ -20,6 +20,7 @@ public class UserModel extends Observable implements Serializable {
     private String profileImgLink;
     private String userName;
     private String userId;
+    private GroupModel groupModel;
     @Exclude
     private static UserModel currentUser;
 
@@ -66,6 +67,10 @@ public class UserModel extends Observable implements Serializable {
         return profileImgLink;
     }
 
+    public void setProfileImgLink(String profileImgLink) {
+        this.profileImgLink = profileImgLink;
+    }
+
     public static void loadCurrentUser() {
         FirebaseH firebaseH = new FirebaseH();
         FirebaseH.RealtimeDatabase realtimeDatabase = firebaseH.new RealtimeDatabase();
@@ -88,6 +93,18 @@ public class UserModel extends Observable implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isGroup() {
+        return groupModel != null;
+    }
+
+    public GroupModel getGroupModel() {
+        return groupModel;
+    }
+
+    public void setGroupModel(GroupModel groupModel) {
+        this.groupModel = groupModel;
     }
 
 

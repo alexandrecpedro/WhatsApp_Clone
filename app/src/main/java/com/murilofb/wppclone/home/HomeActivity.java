@@ -76,6 +76,8 @@ public class HomeActivity extends AppCompatActivity implements Observer {
                 MessagesTab messagesTab = (MessagesTab) adapter.getPage(0);
                 if (newText != null && !newText.equals("")) {
                     messagesTab.queryMessages(newText);
+                } else if (newText != null && newText.equals("")) {
+                    messagesTab.showDefaultMessages();
                 }
                 return false;
             }

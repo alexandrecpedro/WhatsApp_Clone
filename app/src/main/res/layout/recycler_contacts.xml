@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/contactName"
+        android:id="@+id/contactTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/contactProfilePhoto"
@@ -27,15 +27,15 @@
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/contactUserName"
+        app:layout_constraintBottom_toTopOf="@id/contactDesc"
         app:layout_constraintLeft_toRightOf="@id/contactProfilePhoto"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/contactUserName"
+        android:id="@+id/contactDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/contactName"
+        android:layout_below="@id/contactTitle"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/contactProfilePhoto"
         android:drawableLeft="@drawable/ic_gallery"
@@ -43,5 +43,5 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/contactProfilePhoto"
-        app:layout_constraintTop_toBottomOf="@id/contactName" />
+        app:layout_constraintTop_toBottomOf="@id/contactTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

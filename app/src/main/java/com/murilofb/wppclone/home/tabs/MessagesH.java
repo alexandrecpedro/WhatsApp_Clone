@@ -32,7 +32,7 @@ public class MessagesH {
     public List<UserModel> queryMessages(String str) {
         List<UserModel> queriedList = new ArrayList<>();
         for (UserModel item : friendsChat) {
-            if (item.getName().toLowerCase().contains(str)) {
+            if (item.getUserName().toLowerCase().contains(str)) {
                 queriedList.add(item);
             }
         }

@@ -28,6 +28,7 @@ import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.adapters.ContactsAdapter;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.ToastH;
+import com.murilofb.wppclone.home.HomeActivity;
 import com.murilofb.wppclone.models.GroupModel;
 import com.murilofb.wppclone.models.UserModel;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -45,6 +46,8 @@ public class ConfigGroupAct extends AppCompatActivity {
     private FloatingActionButton fabFinishCreation;
     private CircleImageView groupIcon;
     private EditText edtGroupName;
+
+    private List<UserModel> groupList;
     private Bitmap groupIconBitmap;
     private ToastH toastH;
     private GroupModel groupModel;
@@ -56,15 +59,12 @@ public class ConfigGroupAct extends AppCompatActivity {
                 case R.id.fabFinishCreation:
                     String groupName = edtGroupName.getText().toString();
                     if (!groupName.equals("")) {
-
+                        groupList.add(UserModel.getCurrentUser());
+                        groupModel.setParticipants(groupList);
                         groupModel.setGroupName(groupName);
                         database.createGroup(groupModel, groupIconBitmap);
-
-                        Log.i("CreateGroup", " \n" +
-                                "Name: " + groupModel.getGroupName() +
-                                "\n IconUrl: " + groupModel.getIconUrl() +
-                                "\n GroupId: " + groupModel.getGroupId() +
-                                "\n GroupSize: " + groupModel.getParticipants().size());
+                        startActivity(new Intent(ConfigGroupAct.this, HomeActivity.class));
+                        finishAffinity();
                     } else {
                         toastH.showToast(getString(R.string.toast_empty_group_name));
                     }
@@ -90,31 +90,6 @@ public class ConfigGroupAct extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.toolbar_create_group_title));
         initView();
-    }
-
-    private void initView() {
-        List<UserModel> groupList = (List<UserModel>) getIntent().getSerializableExtra("groupList");
-        groupModel = new GroupModel();
-        groupModel.setParticipants(groupList);
-
-        toastH = new ToastH(this);
-
-        fabFinishCreation = findViewById(R.id.fabFinishCreation);
-        fabFinishCreation.setOnClickListener(clickListener);
-
-        groupIcon = findViewById(R.id.groupIcon);
-        groupIcon.setOnClickListener(clickListener);
-
-        txtParticipantsCount = findViewById(R.id.txtParticipantsCount);
-        txtParticipantsCount.setText(getString(R.string.txt_participants_count) + " " + groupList.size());
-
-        edtGroupName = findViewById(R.id.edtGroupName);
-
-        database = new FirebaseH().new RealtimeDatabase();
-
-        recyclerParticipants = findViewById(R.id.recyclerParticipants);
-        recyclerParticipants.setLayoutManager(new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false));
-        recyclerParticipants.setAdapter(new ContactsAdapter(groupList, null));
     }
 
     @Override
@@ -145,4 +120,31 @@ public class ConfigGroupAct extends AppCompatActivity {
             }
         }
     }
+
+    private void initView() {
+        toastH = new ToastH(this);
+
+        fabFinishCreation = findViewById(R.id.fabFinishCreation);
+        fabFinishCreation.setOnClickListener(clickListener);
+
+        groupIcon = findViewById(R.id.groupIcon);
+        groupIcon.setOnClickListener(clickListener);
+
+        groupList = (List<UserModel>) getIntent().getSerializableExtra("groupList");
+
+        txtParticipantsCount = findViewById(R.id.txtParticipantsCount);
+        txtParticipantsCount.setText(getString(R.string.txt_participants_count) + " " + groupList.size());
+
+        edtGroupName = findViewById(R.id.edtGroupName);
+
+        database = new FirebaseH().new RealtimeDatabase(this);
+
+        ContactsAdapter adapter = new ContactsAdapter(groupList, null);
+        recyclerParticipants = findViewById(R.id.recyclerParticipants);
+        recyclerParticipants.setLayoutManager(new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false));
+        recyclerParticipants.setAdapter(adapter);
+
+        groupModel = new GroupModel();
+    }
+
 }

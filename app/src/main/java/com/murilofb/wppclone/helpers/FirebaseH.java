@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,7 +29,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.murilofb.wppclone.R;
 import com.murilofb.wppclone.chat.ChatActivity;
-import com.murilofb.wppclone.home.tabs.MessagesH;
 import com.murilofb.wppclone.models.GroupModel;
 import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
@@ -152,7 +150,6 @@ public class FirebaseH extends Observable {
         public static final String ARG_ATT_CONTACTS = "attCont";
         public static final String ARG_ATT_MESSAGES = "attMsg";
         public static final String ARG_ATT_LAST_MESSAGES = "attLast";
-        private List<MessageModel> messagesList = new ArrayList<>();
 
         private final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         private final DatabaseReference usersRef = rootRef.child("users");
@@ -167,7 +164,6 @@ public class FirebaseH extends Observable {
         private ToastH toastH;
 
         public RealtimeDatabase(Activity activity) {
-
             currentUserRef.keepSynced(true);
             if (activity != null) {
                 toastH = new ToastH(activity);
@@ -192,14 +188,13 @@ public class FirebaseH extends Observable {
             });
         }
 
-
         public void loadFriendsList(List<UserModel> friendsList) {
             userFriendsReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     friendsList.clear();
                     UserModel group = new UserModel();
-                    group.setName(activity.getString(R.string.item_new_group));
+                    group.setUserName(activity.getString(R.string.item_new_group));
                     group.setEmail("");
                     friendsList.add(group);
                     for (DataSnapshot item : snapshot.getChildren()) {
@@ -235,29 +230,55 @@ public class FirebaseH extends Observable {
                     listFriends.clear();
                     for (DataSnapshot item : snapshot.getChildren()) {
                         String friendID = item.getKey();
-                        String lastMsg = "";
+                        String lastMsg = "msg";
                         MessageModel messageModel = item.getValue(MessageModel.class);
                         if (messageModel.getMessage() != null) {
                             lastMsg = messageModel.getMessage();
                         }
-                        String finalLastMsg = lastMsg;
-                        usersRef.child(friendID).child("userData").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                UserModel userModel = snapshot.getValue(UserModel.class);
-                                userModel.setUserName(finalLastMsg);
-                                listFriends.add(userModel);
-                                updateChanges(ARG_ATT_LAST_MESSAGES);
-                            }
+                        final String finalLastMsg = lastMsg;
+                        if (messageModel.isGroup()) {
+                            String groupId = messageModel.getGroupModel().getGroupId();
+                            groupsReference.child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    GroupModel groupModel = snapshot.getValue(GroupModel.class);
+                                    UserModel userModel = new UserModel();
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                                    userModel.setUserName(groupModel.getGroupName());
+                                    userModel.setProfileImgLink(groupModel.getIconUrl());
+                                    userModel.setName(finalLastMsg);
+                                    userModel.setUserId(groupModel.getGroupId());
+                                    userModel.setGroupModel(groupModel);
 
-                            }
-                        });
+                                    listFriends.add(userModel);
+                                    updateChanges(ARG_ATT_LAST_MESSAGES);
+                                }
 
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        } else {
+                            usersRef.child(friendID).child("userData").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    UserModel userModel = snapshot.getValue(UserModel.class);
+                                    if (userModel != null) {
+                                        userModel.setName(finalLastMsg);
+                                        listFriends.add(userModel);
+                                    }
+                                    updateChanges(ARG_ATT_LAST_MESSAGES);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                        }
                     }
-
 
                 }
 
@@ -278,7 +299,6 @@ public class FirebaseH extends Observable {
                     } else {
 
                         for (DataSnapshot item : snapshot.getChildren()) {
-                            Log.i("friendSearch", item.getKey());
                             String foundEmail = item.child("userData").child("email").getValue().toString();
                             if (foundEmail.equals(new Auth(null).getUserEmail())) {
                                 toastH.showToast(activity.getString(R.string.toast_new_contact_same_email));
@@ -326,24 +346,34 @@ public class FirebaseH extends Observable {
         }
 
         public void createGroup(GroupModel group, Bitmap groupIcon) {
-
             groupsReference.child(group.getGroupId()).setValue(group);
             if (groupIcon != null) {
                 new StorageH().uploadGroupImage(groupIcon, group.getGroupId());
             }
+            UserModel currentUser = UserModel.getCurrentUser();
+            String currentUserName = "";
+            if (currentUser != null) {
+                currentUserName = currentUser.getUserName();
+            }
+            String newGroupMsgSample = activity.getString(R.string.new_group_message);
+
+            MessageModel newGroupMessage = new MessageModel(newGroupMsgSample + " " + currentUserName, currentUser.getUserId(), group);
+
+            sendGroupMessage(group.getParticipants(), newGroupMessage, group.getGroupId());
 
         }
 
-        public void sendGroupMessage(List<UserModel> participants, MessageModel message, String groupkey) {
+        public void sendGroupMessage(List<UserModel> participants, MessageModel message, String groupKey) {
             for (UserModel user : participants) {
                 String userId = user.getUserId();
-                usersRef.child(userId).child("messages").child(groupkey).push().setValue(message);
-                usersRef.child(userId).child("lastMessages").child(groupkey).setValue(message);
+                usersRef.child(userId).child("messages").child(groupKey).push().setValue(message);
+                usersRef.child(userId).child("lastMessages").child(groupKey).setValue(message);
             }
         }
 
-        public void loadMessages(String from) {
-            Query messagesQuery = userMessagesRef.child(from).orderByChild("messageTime");
+        public void loadMessages(String from, List<MessageModel> messagesList) {
+            Query messagesQuery;
+            messagesQuery = userMessagesRef.child(from).orderByChild("messageTime");
             messagesQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -360,10 +390,6 @@ public class FirebaseH extends Observable {
 
                 }
             });
-        }
-
-        public List<MessageModel> getMessagesList() {
-            return messagesList;
         }
 
         public void changeUserName(String newUserName) {
@@ -441,7 +467,8 @@ public class FirebaseH extends Observable {
                         groupIconReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
-                                new RealtimeDatabase().groupsReference.child(groupKey)
+                                new RealtimeDatabase().groupsReference
+                                        .child(groupKey)
                                         .child("iconUrl")
                                         .setValue(task.getResult().toString());
                                 bitmap.recycle();
@@ -472,9 +499,47 @@ public class FirebaseH extends Observable {
                             public void onComplete(@NonNull Task<Uri> task) {
                                 MessageModel message = new MessageModel();
                                 message.setPhotoUrl(task.getResult().toString());
+                                message.setMessage("");
                                 RealtimeDatabase database = new FirebaseH().new RealtimeDatabase();
                                 database.uploadedImages.push().setValue(sentImageRef.getPath());
                                 database.sendMessage(message, to);
+                                bitmap.recycle();
+
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        }
+
+        public void sendGroupImage(Bitmap bitmap, String from, GroupModel groupModel) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if (from.equals("camera")) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+            } else if (from.equals("gallery")) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 70, baos);
+            }
+
+            sentImageRef.putBytes(baos.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        sentImageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+
+                                MessageModel message = new MessageModel();
+                                message.setPhotoUrl(task.getResult().toString());
+                                message.setIsGroup(true);
+                                message.setGroupModel(groupModel);
+                                message.setMessage("");
+                                message.setSentBy(UserModel.getCurrentUser().getUserId());
+
+                                RealtimeDatabase database = new FirebaseH().new RealtimeDatabase();
+                                database.uploadedImages.push().setValue(sentImageRef.getPath());
+                                database.sendGroupMessage(groupModel.getParticipants(), message, groupModel.getGroupId());
                                 bitmap.recycle();
 
                             }

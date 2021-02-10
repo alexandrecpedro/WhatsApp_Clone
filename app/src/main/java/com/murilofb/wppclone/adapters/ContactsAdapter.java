@@ -73,25 +73,24 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public void onBindViewHolder(@NonNull ContactsViewHolder holder, int position) {
         UserModel friend = friendsList.get(position);
-        boolean groupItem = friend.getEmail().equals("");
+        boolean groupItem = friend.getEmail() != null && friend.getEmail().equals("");
         if (verticalVersion) {
             String[] splittedName = friend.getName().split(" ");
-            holder.txtName.setText(splittedName[0]);
+            holder.txtContactTitle.setText(splittedName[0]);
             if (recyclerClick == null) {
                 holder.imgBtnRemoveMember.setVisibility(View.GONE);
             }
         } else {
-            holder.txtName.setText(friend.getName());
+            holder.txtContactTitle.setText(friend.getUserName());
         }
 
 
         if (!groupItem && !friend.getUserName().equals("") && !verticalVersion) {
-            holder.txtUserName.setCompoundDrawables(null, null, null, null);
-            holder.txtUserName.setText(friend.getUserName());
+            holder.txtContactDesc.setCompoundDrawables(null, null, null, null);
+            holder.txtContactDesc.setText(friend.getName());
         }
         if (groupItem) {
-            Log.i("GroupActivity", "Position " + position + " groupItem");
-            holder.txtUserName.setVisibility(View.GONE);
+            holder.txtContactDesc.setVisibility(View.GONE);
             Glide.with(holder.itemView)
                     .load(R.drawable.new_group_green)
                     .into(holder.profilePhoto);
@@ -103,7 +102,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         }
         if (isMessageFrag) {
             int lightBlue = ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_blue_light);
-            holder.txtUserName.setTextColor(lightBlue);
+            holder.txtContactDesc.setTextColor(lightBlue);
         }
 
     }
@@ -118,16 +117,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
     public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView profilePhoto;
-        TextView txtName;
-        TextView txtUserName;
+        TextView txtContactTitle;
+        TextView txtContactDesc;
         onRecyclerClick recyclerClick;
         ImageButton imgBtnRemoveMember;
 
         public ContactsViewHolder(@NonNull View itemView, @Nullable onRecyclerClick recyclerClick) {
             super(itemView);
             profilePhoto = itemView.findViewById(R.id.contactProfilePhoto);
-            txtName = itemView.findViewById(R.id.contactName);
-            txtUserName = itemView.findViewById(R.id.contactUserName);
+            txtContactTitle = itemView.findViewById(R.id.contactTitle);
+            txtContactDesc = itemView.findViewById(R.id.contactDesc);
             imgBtnRemoveMember = itemView.findViewById(R.id.imgBtnRemoveMember);
 
             if (recyclerClick != null) {

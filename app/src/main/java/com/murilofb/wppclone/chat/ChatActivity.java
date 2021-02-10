@@ -29,6 +29,7 @@ import com.murilofb.wppclone.adapters.ChatAdapter;
 import com.murilofb.wppclone.helpers.FirebaseH;
 import com.murilofb.wppclone.helpers.SecurityH;
 import com.murilofb.wppclone.helpers.ToastH;
+import com.murilofb.wppclone.models.GroupModel;
 import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 import com.murilofb.wppclone.settings.SettingsH;
@@ -38,6 +39,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -56,6 +59,7 @@ public class ChatActivity extends AppCompatActivity implements Observer {
     //    private boolean isFriendAlready;
     private boolean messageSent;
     private ChatH chatH;
+    private List<MessageModel> messagesList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +76,6 @@ public class ChatActivity extends AppCompatActivity implements Observer {
         chatH = new ChatH(this);
 
         friend = (UserModel) getIntent().getSerializableExtra("friend");
-        // isFriendAlready = getIntent().getBooleanExtra("isFriendAlready", true);
 
         setOnCLick();
         configureRecycler();
@@ -85,7 +88,7 @@ public class ChatActivity extends AppCompatActivity implements Observer {
                     .placeholder(R.drawable.default_user_but_round)
                     .into(friendPhoto);
             final TextView txtChatFriendName = findViewById(R.id.txtChatFriendName);
-            txtChatFriendName.setText(friend.getName());
+            txtChatFriendName.setText(friend.getUserName());
         }
     }
 
@@ -94,8 +97,7 @@ public class ChatActivity extends AppCompatActivity implements Observer {
         super.onStop();
         //if (!isFriendAlready) {
         if (messageSent) {
-            if (friend != null) {
-
+            if (friend != null && !friend.isGroup()) {
                 new FirebaseH().new RealtimeDatabase().addFriend(friend.getUserId(), friend.getEmail());
             }
         }
@@ -109,10 +111,10 @@ public class ChatActivity extends AppCompatActivity implements Observer {
         if (arg.equals(FirebaseH.RealtimeDatabase.ARG_ATT_MESSAGES)) {
             Log.i("ChatActivity", "update");
             if (!loaded) {
-                adapter.notifyItemRangeChanged(0, database.getMessagesList().size() - 1);
+                adapter.notifyItemRangeChanged(0, messagesList.size() - 1);
                 loaded = true;
             } else {
-                adapter.notifyItemInserted(database.getMessagesList().size() - 1);
+                adapter.notifyItemInserted(messagesList.size() - 1);
             }
             if (adapter.getItemCount() > 0) {
                 recyclerMessages.scrollToPosition(adapter.getItemCount() - 1);
@@ -161,7 +163,12 @@ public class ChatActivity extends AppCompatActivity implements Observer {
 
                 FirebaseH firebaseH = new FirebaseH();
                 FirebaseH.StorageH storageH = firebaseH.new StorageH();
-                storageH.sendImage(imageBitmap, from, friend.getUserId());
+                if (friend.isGroup()) {
+                    storageH.sendGroupImage(imageBitmap, from, friend.getGroupModel());
+                } else {
+                    storageH.sendImage(imageBitmap, from, friend.getUserId());
+                }
+
 
             }
 
@@ -172,8 +179,11 @@ public class ChatActivity extends AppCompatActivity implements Observer {
         FirebaseH firebaseH = new FirebaseH();
         firebaseH.addObserver(this);
         database = firebaseH.new RealtimeDatabase();
-        database.loadMessages(friend.getUserId());
-        adapter = new ChatAdapter(database.getMessagesList());
+
+        database.loadMessages(friend.getUserId(), messagesList);
+
+
+        adapter = new ChatAdapter(messagesList);
         recyclerMessages.setAdapter(adapter);
         recyclerMessages.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     }
@@ -201,8 +211,20 @@ public class ChatActivity extends AppCompatActivity implements Observer {
             if (messageStr.equals("")) {
                 toastH.showToast(getString(R.string.toast_empty_message));
             } else {
-                MessageModel message = new MessageModel(messageStr);
-                database.sendMessage(message, friend.getUserId());
+
+                MessageModel message;
+                if (friend.isGroup()) {
+                    Log.i("ChatAct", "GROUP");
+                    GroupModel group = friend.getGroupModel();
+                    UserModel currentUser = UserModel.getCurrentUser();
+                    message = new MessageModel(messageStr, currentUser.getUserId(), group);
+                    database.sendGroupMessage(group.getParticipants(), message, friend.getUserId());
+                } else {
+                    Log.i("ChatAct", "NOT A GROuP");
+                    message = new MessageModel(messageStr);
+                    database.sendMessage(message, friend.getUserId());
+                }
+
                 edtNewMessage.setText("");
             }
         }
