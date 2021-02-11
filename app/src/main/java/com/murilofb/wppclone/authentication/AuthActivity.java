@@ -46,9 +46,5 @@ public class AuthActivity extends AppCompatActivity implements Observer {
             i.putExtra(SettingsActivity.TAG_SIGNUP, true);
             startActivity(i);
         }
-
-
     }
-
-
 }

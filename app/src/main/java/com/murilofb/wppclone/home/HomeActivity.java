@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity implements Observer {
     private FirebaseH.Auth auth;
     private MaterialSearchView searchView;
     private FragmentPagerItemAdapter adapter;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,13 +73,28 @@ public class HomeActivity extends AppCompatActivity implements Observer {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.i("Messages", "TextChange");
                 MessagesTab messagesTab = (MessagesTab) adapter.getPage(0);
-                if (newText != null && !newText.equals("")) {
-                    messagesTab.queryMessages(newText);
-                } else if (newText != null && newText.equals("")) {
-                    messagesTab.showDefaultMessages();
+                ContactsTab contactsTab = (ContactsTab) adapter.getPage(1);
+                switch (viewPager.getCurrentItem()) {
+                    case 0:
+                        if (newText != null && !newText.equals("")) {
+                            messagesTab.queryMessages(newText);
+                        } else if (newText != null && newText.equals("")) {
+                            messagesTab.showDefaultMessages();
+                        }
+                        contactsTab.showDefaultMessages();
+                        break;
+                    case 1:
+                        if (newText != null && !newText.equals("")) {
+                            contactsTab.queryMessages(newText);
+                        } else if (newText != null && newText.equals("")) {
+                            contactsTab.showDefaultMessages();
+                        }
+                        messagesTab.showDefaultMessages();
+                        break;
                 }
+
+
                 return false;
             }
         });
@@ -144,7 +160,7 @@ public class HomeActivity extends AppCompatActivity implements Observer {
                 .add(getString(R.string.title_contacts_frag), ContactsTab.class)
                 .create()
         );
-        ViewPager viewPager = findViewById(R.id.viewPagerHome);
+        viewPager = findViewById(R.id.viewPagerHome);
         viewPager.setAdapter(adapter);
 
         SmartTabLayout tabLayout = findViewById(R.id.tabLayoutHome);

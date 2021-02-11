@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.murilofb.wppclone.R;
+import com.murilofb.wppclone.models.GroupModel;
 import com.murilofb.wppclone.models.MessageModel;
 import com.murilofb.wppclone.models.UserModel;
 
@@ -76,6 +77,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                     .load(Uri.parse(message.getPhotoUrl()))
                     .into(holder.imgVPhoto);
         }
+        if (message.isGroup()) {
+            if (!message.isSent()) {
+                GroupModel group = message.getGroupModel();
+                List<UserModel> participants = group.getParticipants();
+                String sentBy = message.getSentBy();
+                for (UserModel item : participants) {
+                    if (item.getUserId().equals(sentBy)) {
+                        holder.txtSentName.setText(item.getUserName());
+                        holder.txtSentName.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
+            }
+        }
         SimpleDateFormat sdFormat = new SimpleDateFormat("HH:mm");
         holder.txtHourSent.setText(sdFormat.format(message.getMessageTime()));
         sdFormat = new SimpleDateFormat("dd/MM");
@@ -95,6 +110,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     public class ChatViewHolder extends RecyclerView.ViewHolder {
         TextView txtMessage;
+        TextView txtSentName;
         ImageView imgVPhoto;
         TextView txtHourSent;
         TextView txtDateSent;
@@ -102,6 +118,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             txtMessage = itemView.findViewById(R.id.txtMessage);
+            txtSentName = itemView.findViewById(R.id.sentName);
             imgVPhoto = itemView.findViewById(R.id.imgVPhoto);
             txtHourSent = itemView.findViewById(R.id.txtHour);
             txtDateSent = itemView.findViewById(R.id.txtDate);

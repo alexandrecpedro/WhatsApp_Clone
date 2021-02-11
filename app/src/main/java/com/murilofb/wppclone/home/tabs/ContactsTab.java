@@ -96,5 +96,54 @@ public class ContactsTab extends Fragment implements Observer {
         }
     }
 
+    public void queryMessages(String string) {
+        List<UserModel> queriedMessages = getQueriedList(string);
+
+        final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
+            @Override
+            public void onClick(int position) {
+                UserModel friend = queriedMessages.get(position);
+                Intent i = new Intent(getActivity(), ChatActivity.class);
+                i.putExtra("friend", friend);
+                startActivity(i);
+            }
+        };
+        adapter = new ContactsAdapter(queriedMessages, recyclerClick, false);
+        adapter.notifyDataSetChanged();
+        recyclerContacts.setAdapter(adapter);
+    }
+
+    public List<UserModel> getQueriedList(String str) {
+        List<UserModel> queriedList = new ArrayList<>();
+        for (UserModel item : friendList) {
+            String lcName = "";
+            String lcUserName = "";
+            if (item.getName() != null) {
+                lcName = item.getName().toLowerCase();
+            }
+            if (item.getUserName() != null) {
+                lcUserName = item.getUserName().toLowerCase();
+            }
+
+            if (lcName.contains(str) || lcUserName.contains(str)) {
+                queriedList.add(item);
+            }
+        }
+        return queriedList;
+    }
+
+    public void showDefaultMessages() {
+        final ContactsAdapter.onRecyclerClick recyclerClick = new ContactsAdapter.onRecyclerClick() {
+            @Override
+            public void onClick(int position) {
+                UserModel friend = friendList.get(position);
+                Intent i = new Intent(getActivity(), ChatActivity.class);
+                i.putExtra("friend", friend);
+                startActivity(i);
+            }
+        };
+        adapter = new ContactsAdapter(friendList, recyclerClick, false);
+        recyclerContacts.setAdapter(adapter);
+    }
 
 }

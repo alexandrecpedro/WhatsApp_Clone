@@ -82,6 +82,7 @@ public class FirebaseH extends Observable {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         model.setUserId(auth.getCurrentUser().getUid());
+                        UserModel.setCurrentUser(model);
                         new RealtimeDatabase().putUserData(model);
                         updateChanges(ARG_SIGNUP);
                     } else {
@@ -141,8 +142,8 @@ public class FirebaseH extends Observable {
         }
 
         public void signOutUser() {
+            new RealtimeDatabase().currentUserRef.keepSynced(false);
             auth.signOut();
-
         }
     }
 
@@ -364,8 +365,14 @@ public class FirebaseH extends Observable {
         }
 
         public void sendGroupMessage(List<UserModel> participants, MessageModel message, String groupKey) {
+            String currentUserId = UserModel.getCurrentUser().getUserId();
             for (UserModel user : participants) {
                 String userId = user.getUserId();
+                if (userId.equals(currentUserId)) {
+                    message.setSent(true);
+                } else {
+                    message.setSent(false);
+                }
                 usersRef.child(userId).child("messages").child(groupKey).push().setValue(message);
                 usersRef.child(userId).child("lastMessages").child(groupKey).setValue(message);
             }

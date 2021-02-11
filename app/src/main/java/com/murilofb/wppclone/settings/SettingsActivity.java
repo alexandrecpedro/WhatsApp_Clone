@@ -61,6 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         boolean cameFromSignUp = getIntent().getBooleanExtra(TAG_SIGNUP, false);
         setClickListener();
+
         if (cameFromSignUp) {
             TextView txtWelcomeTitle = findViewById(R.id.txtWelcomeTitle);
             TextView txtWelcomeMessage = findViewById(R.id.txtWelcomeMessage);
@@ -69,15 +70,14 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            UserModel currentUser = UserModel.getCurrentUser();
-
-            if (currentUser != null) {
-                txtUserName.setText(currentUser.getUserName());
-                Glide.with(SettingsActivity.this)
-                        .load(currentUser.getProfileImgLink())
-                        .placeholder(R.drawable.default_user_but_round)
-                        .into(editUserImage);
-            }
+        }
+        UserModel currentUser = UserModel.getCurrentUser();
+        if (currentUser != null) {
+            txtUserName.setText(currentUser.getUserName());
+            Glide.with(SettingsActivity.this)
+                    .load(currentUser.getProfileImgLink())
+                    .placeholder(R.drawable.default_user_but_round)
+                    .into(editUserImage);
         }
         permissionsH.getUserPermissions();
 

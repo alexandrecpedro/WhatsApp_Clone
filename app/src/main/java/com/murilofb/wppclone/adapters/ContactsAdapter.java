@@ -49,9 +49,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     //Esse construtor será somente chamado na activity de gerar grupo
     public ContactsAdapter(List<UserModel> friendsList, @Nullable onRecyclerClick recyclerClick) {
         this.friendsList = friendsList;
-        if (recyclerClick != null) {
+//        if (recyclerClick != null) {
             this.recyclerClick = recyclerClick;
-        }
+  //      }
         verticalVersion = true;
     }
 
@@ -64,9 +64,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_contacts, parent, false);
         }
-        if (recyclerClick == null) {
-            return new ContactsViewHolder(view, null);
-        }
+    //    if (recyclerClick == null) {
+         //   return new ContactsViewHolder(view, null);
+      //  }
         return new ContactsViewHolder(view, recyclerClick);
     }
 
@@ -85,7 +85,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         }
 
 
-        if (!groupItem && !friend.getUserName().equals("") && !verticalVersion) {
+        if (!groupItem && !friend.getName().equals("") && !verticalVersion) {
             holder.txtContactDesc.setCompoundDrawables(null, null, null, null);
             holder.txtContactDesc.setText(friend.getName());
         }
@@ -138,9 +138,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
         @Override
         public void onClick(View v) {
-            if (recyclerClick != null) {
+            //if (recyclerClick != null) {
                 recyclerClick.onClick(getAdapterPosition());
-            }
+            //}
         }
     }
 

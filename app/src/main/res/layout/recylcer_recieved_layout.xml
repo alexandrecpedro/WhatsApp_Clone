@@ -43,31 +43,55 @@
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtMessage"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="2"
-            android:text="text sample"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgVPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="2"
-            android:adjustViewBounds="true"
-            android:maxHeight="300dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/img_sent_placeholder"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/sentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginLeft="5dp"
+                android:text="Murilo Francisco Bento"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="text sample"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/imgVPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="300dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="300dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/img_sent_placeholder"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 

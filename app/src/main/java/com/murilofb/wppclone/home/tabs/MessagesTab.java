@@ -50,12 +50,7 @@ public class MessagesTab extends Fragment implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (arg.equals(FirebaseH.RealtimeDatabase.ARG_ATT_LAST_MESSAGES)) {
-            if (adapter.getItemCount() == 0){
-                adapter.notifyDataSetChanged();
-            }else {
-                adapter.notifyItemRangeChanged(0, adapter.getItemCount() );
-            }
-
+            adapter.notifyDataSetChanged();
         }
     }
 
