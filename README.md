@@ -4,7 +4,7 @@
 <br>
 
 <div align = 'center' justify-content = 'space-around' >
-   <img src= './assets/WhatsApp_Logo.svg' alt = 'WhatsApp logo' >
+   <img width=' 100px ' src= './assets/WhatsApp_Logo.svg' alt = 'WhatsApp logo' >
 </div>
 <br>
 <br>
