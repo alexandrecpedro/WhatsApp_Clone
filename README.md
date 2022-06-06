@@ -11,8 +11,8 @@
 
 |                                                                                |                                                                      |                                                                         |                                                                                       |
 |:------------------------------------------------------------------------------:|:--------------------------------------------------------------------:|:-----------------------------------------------------------------------:|:-------------------------------------------------------------------------------------:|
-|       <img width="1604" alt="login" src="./assets/project/screen1.jpg">        | <img width="1400" alt="register" src="./assets/project/screen2.jpg"> | <img width="1604" alt="permission1" src="./assets/project/screen3.jpg"> |        <img width="1604" alt="permission2" src="./assets/project/screen4.jpg">        |
-| <img width="1604" alt=" personal settings" src="./assets/project/screen5.jpg"> |    <img width="1604" alt="messages" src="./assets/project/screen10.jpeg">    |  <img width="1604" alt="contacts" src="./assets/project/screen9.jpg">   | <img width="1604" alt="app settings and logout" src="./assets/project/screen16.jpeg"> |
+|       <img width="1604" alt="login" src="./assets/project/screen1.jpg">        | <img width="1200" alt="register" src="./assets/project/screen2.jpg"> | <img width="1604" alt="permission1" src="./assets/project/screen3.jpg"> |        <img width="1604" alt="permission2" src="./assets/project/screen4.jpg">        |
+| <img width="1604" alt=" personal settings" src="./assets/project/screen5.jpg"> |    <img width="1604" alt="messages" src="./assets/project/screen10.jpg">    |  <img width="1604" alt="contacts" src="./assets/project/screen9.jpg">   | <img width="1604" alt="app settings and logout" src="./assets/project/screen16.jpeg"> |
 
 <br>
 
